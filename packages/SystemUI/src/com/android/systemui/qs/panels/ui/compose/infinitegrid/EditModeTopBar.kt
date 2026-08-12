@@ -56,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -134,6 +135,7 @@ private fun NavigationArrow(
             Icons.AutoMirrored.Filled.ArrowBack,
             contentDescription =
                 stringResource(id = com.android.internal.R.string.action_bar_up_description),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
@@ -167,6 +169,7 @@ private fun SingleTopBarAction(
         Icon(
             editTopBarActionViewModel.icon,
             contentDescription = stringResource(id = editTopBarActionViewModel.labelId),
+            modifier = Modifier.size(20.dp),
         )
     }
 }
@@ -190,12 +193,13 @@ private fun TopBarActionOverflow(
             Icon(
                 MoreVert,
                 contentDescription = stringResource(R.string.qs_edit_menu_content_description),
+                modifier = Modifier.size(20.dp),
             )
         }
         DropdownMenu(
             expanded = showMenu,
             onDismissRequest = { showMenu = false },
-            shape = RoundedCornerShape(26.dp),
+            shape = RoundedCornerShape(dimensionResource(R.dimen.qs_shape_panel_corner_radius)),
             modifier = Modifier.testTag(OPTIONS_DROP_DOWN_TEST_TAG).requiredWidthIn(min = 216.dp),
             containerColor = MaterialTheme.colorScheme.surfaceBright,
         ) {
@@ -220,7 +224,7 @@ private fun DropdownMenuElement(
             dismissDropdown()
         },
         text = {
-            Box(modifier = Modifier.padding(start = 6.dp)) {
+            Box(modifier = Modifier.padding(start = 4.dp)) {
                 Text(
                     text = stringResource(action.labelId),
                     style = MaterialTheme.typography.labelLarge,
@@ -232,8 +236,8 @@ private fun DropdownMenuElement(
             Icon(action.icon, contentDescription = null, modifier = Modifier.size(20.dp))
         },
         colors = menuItemColors(),
-        contentPadding = PaddingValues(16.dp),
-        modifier = modifier.heightIn(min = 52.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp),
+        modifier = modifier.heightIn(min = 48.dp),
     )
 }
 

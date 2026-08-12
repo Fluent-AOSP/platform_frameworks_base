@@ -33,11 +33,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -194,9 +194,11 @@ private fun IconButton(
     if (model == null) {
         return
     }
+    val buttonCornerRadius = IconButtonDimensions.BackgroundCornerRadius
+    val buttonShape = RoundedCornerShape(buttonCornerRadius)
     Expandable(
         color = Color.Unspecified,
-        shape = CircleShape,
+        shape = buttonShape,
         onClick = model.onClick,
         modifier =
             modifier
@@ -206,8 +208,7 @@ private fun IconButton(
                 )
                 .semantics { role = Role.Button }
                 .aspectRatio(1.0F)
-                .borderOnFocus(MaterialTheme.colorScheme.secondary, CornerSize(percent = 50))
-                .wrapContentSize(),
+                .borderOnFocus(MaterialTheme.colorScheme.secondary, CornerSize(buttonCornerRadius)),
         useModifierBasedImplementation = true,
     ) {
         val protectionColor =
@@ -216,20 +217,22 @@ private fun IconButton(
             } else {
                 Color.Transparent
             }
-        Box(
-            modifier =
-                Modifier.size(IconButtonDimensions.ColoredBackgroundSize)
-                    .background(
-                        color = protectionColor,
-                        shape = RoundedCornerShape(IconButtonDimensions.BackgroundCornerRadius),
-                    ),
-            contentAlignment = Alignment.Center,
-        ) {
-            ToolbarIcon(
-                icon = model.icon,
-                modifier = Modifier.size(IconButtonDimensions.IconSize),
-                tint = iconColor,
-            )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier =
+                    Modifier.requiredSize(IconButtonDimensions.ColoredBackgroundSize)
+                        .background(
+                            color = protectionColor,
+                            shape = RoundedCornerShape(IconButtonDimensions.BackgroundCornerRadius),
+                        ),
+                contentAlignment = Alignment.Center,
+            ) {
+                ToolbarIcon(
+                    icon = model.icon,
+                    modifier = Modifier.size(IconButtonDimensions.IconSize),
+                    tint = iconColor,
+                )
+            }
         }
     }
 }
@@ -246,25 +249,19 @@ private fun PowerMenuToggleButton(
             Color.Transparent
         }
 
-    val shape =
-        RoundedCornerShape(
-            topStart = PowerMenuToggleButtonConstants.DefaultCornerRadius,
-            topEnd = PowerMenuToggleButtonConstants.DefaultCornerRadius,
-            bottomStart = PowerMenuToggleButtonConstants.DefaultCornerRadius,
-            bottomEnd =
-                if (viewModel.isSelected) {
-                    PowerMenuToggleButtonConstants.SelectedCornerRadius
-                } else {
-                    PowerMenuToggleButtonConstants.DefaultCornerRadius
-                },
-        )
+    val buttonCornerRadius = IconButtonDimensions.BackgroundCornerRadius
+    val shape = RoundedCornerShape(buttonCornerRadius)
 
     val stateDescription = stringResource(viewModel.stateDescriptionRes)
 
     Row(
         modifier =
             modifier
-                .borderOnFocus(MaterialTheme.colorScheme.secondary, CornerSize(percent = 50))
+                .sizeIn(
+                    minHeight = IconButtonDimensions.MinimumSize,
+                    minWidth = IconButtonDimensions.MinimumSize,
+                )
+                .borderOnFocus(MaterialTheme.colorScheme.secondary, CornerSize(buttonCornerRadius))
                 .clip(shape)
                 .focusable()
                 .clickable(role = Role.Button, onClick = viewModel.onClick)
@@ -289,7 +286,11 @@ private fun PowerMenuToggleButton(
                 MaterialTheme.colorScheme.onSurface
             }
 
-        Icon(icon = viewModel.icon, tint = fgColor)
+        Icon(
+            icon = viewModel.icon,
+            tint = fgColor,
+            modifier = Modifier.size(IconButtonDimensions.IconSize),
+        )
 
         val chevronRotation by
             animateFloatAsState(targetValue = viewModel.chevronRotation, label = "ChevronRotation")
@@ -297,7 +298,10 @@ private fun PowerMenuToggleButton(
         Icon(
             icon = viewModel.chevron,
             tint = fgColor,
-            modifier = Modifier.graphicsLayer { rotationZ = chevronRotation },
+            modifier =
+                Modifier.size(IconButtonDimensions.IconSize).graphicsLayer {
+                    rotationZ = chevronRotation
+                },
         )
     }
 }
@@ -345,8 +349,6 @@ private object Toolbar {
 }
 
 private object PowerMenuToggleButtonConstants {
-    val DefaultCornerRadius = 16.dp
-    val SelectedCornerRadius = 4.dp
     val PaddingStart = 8.dp
     val PaddingEnd = 4.dp
     val PaddingVertical = 4.dp

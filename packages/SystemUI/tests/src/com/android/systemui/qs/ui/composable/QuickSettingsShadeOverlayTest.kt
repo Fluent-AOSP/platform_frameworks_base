@@ -118,14 +118,13 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
 
             composeTestRule.apply {
                 // Verify the brightness slider's height.
-                onNodeWithTag(resIdToTestTag("slider"))
-                    .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 48.dp else 52.dp)
+                onNodeWithTag(resIdToTestTag("slider")).assertHeightIsEqualTo(48.dp)
 
                 // Verify the brightness slider's vertical padding.
                 val brightnessSliderNode = onNodeWithTag(resIdToTestTag("brightness_slider"))
                 val sliderBoundsInRoot = brightnessSliderNode.getBoundsInRoot()
                 val sliderContainerBoundsInRoot = brightnessSliderNode.onParent().getBoundsInRoot()
-                val expectValue = if (DesktopSizing.isEnabled) 0.dp else 6.dp
+                val expectValue = if (DesktopSizing.isEnabled) 0.dp else 4.dp
                 assertEquals(expectValue, sliderBoundsInRoot.top - sliderContainerBoundsInRoot.top)
             }
         }
@@ -140,13 +139,11 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
             composeTestRule.setQSShadeOverlay()
             composeTestRule.waitForIdle()
 
-            composeTestRule
-                .onNodeWithTag("element:airplane")
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 56.dp else 72.dp)
+            composeTestRule.onNodeWithTag("element:airplane").assertHeightIsEqualTo(56.dp)
 
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("qs_tile_icon"), useUnmergedTree = true)
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 24.dp else 28.dp)
+                .assertHeightIsEqualTo(20.dp)
 
             // Verify the QS shade overlay's width.
             composeTestRule
@@ -165,13 +162,11 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
             composeTestRule.setQSShadeOverlay()
             composeTestRule.waitForIdle()
 
-            composeTestRule
-                .onNodeWithTag("element:dnd")
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 56.dp else 72.dp)
+            composeTestRule.onNodeWithTag("element:dnd").assertHeightIsEqualTo(56.dp)
 
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("qs_tile_icon"), useUnmergedTree = true)
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 20.dp else 24.dp)
+                .assertHeightIsEqualTo(20.dp)
         }
 
     @Test
@@ -185,12 +180,12 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
             // Verify the toolbar's height.
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("quick_settings_toolbar"))
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 36.dp else 48.dp)
+                .assertHeightIsEqualTo(48.dp)
 
             // Verify the toolbar button's height.
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("settings_button_container"))
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 36.dp else 40.dp)
+                .assertHeightIsEqualTo(48.dp)
         }
 
     @Test
@@ -203,9 +198,7 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
             composeTestRule.waitForIdle()
 
             // Verify the slider's height. "Media" is the tag of the volume slider.
-            composeTestRule
-                .onNodeWithTag(resIdToTestTag("Media"))
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 48.dp else 52.dp)
+            composeTestRule.onNodeWithTag(resIdToTestTag("Media")).assertHeightIsEqualTo(48.dp)
         }
 
     @Test

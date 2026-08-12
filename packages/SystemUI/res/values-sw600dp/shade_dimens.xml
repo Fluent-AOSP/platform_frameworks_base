@@ -22,7 +22,7 @@
 
     <dimen
         name="qs_shape_panel_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">24dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
     <dimen
         name="overlay_shade_panel_shape_radius"
         android:featureFlag="com.android.systemui.desktop_sizing">@dimen/qs_shape_panel_corner_radius</dimen>
@@ -30,40 +30,40 @@
     <!-- QS shade overlay common tiles -->
     <dimen
         name="qs_shape_brightness_container_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">12dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="qs_shape_edit_grid_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">16dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
     <dimen
         name="qs_shape_icon_active_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">10dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="qs_shape_icon_inactive_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">14dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="qs_shape_tile_active_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">14dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="qs_shape_tile_inactive_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">18dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="qs_shape_toolbar_button_background_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="qs_shape_toolbar_feedback_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="qs_size_tile_icon_only_icon"
-        android:featureFlag="com.android.systemui.desktop_sizing">24dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="qs_size_tile_labeled_icon"
         android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="qs_spacing_tile_content"
-        android:featureFlag="com.android.systemui.desktop_sizing">6dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
     <dimen
         name="qs_spacing_tile_start"
-        android:featureFlag="com.android.systemui.desktop_sizing">6dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
     <dimen
         name="qs_spacing_tile_end"
         android:featureFlag="com.android.systemui.desktop_sizing">12dp</dimen>
@@ -72,7 +72,7 @@
         android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
     <dimen
         name="qs_tooltip_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">12dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="common_tile_default_active_icon_corner_radius"
         android:featureFlag="com.android.systemui.desktop_sizing">@dimen/qs_shape_icon_active_corner_radius</dimen>
@@ -108,12 +108,12 @@
         android:featureFlag="com.android.systemui.desktop_sizing">56dp</dimen>
     <dimen
         name="common_tile_default_toggle_target_size"
-        android:featureFlag="com.android.systemui.desktop_sizing">44dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">48dp</dimen>
 
     <!-- QS shade overlay brightness bar -->
     <dimen
         name="overlay_qs_layout_brightness_icon_size"
-        android:featureFlag="com.android.systemui.desktop_sizing">24dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="overlay_qs_layout_brightness_thumb_height"
         android:featureFlag="com.android.systemui.desktop_sizing">40dp</dimen>
@@ -133,19 +133,19 @@
     <!-- QS shade overlay tool bar -->
     <dimen
         name="overlay_qs_layout_toolbar_height"
-        android:featureFlag="com.android.systemui.desktop_sizing">36dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">48dp</dimen>
     <dimen
         name="toolbar_bottom_padding"
-        android:featureFlag="com.android.systemui.desktop_sizing">6dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">8dp</dimen>
     <dimen
         name="toolbar_button_colored_background_size"
-        android:featureFlag="com.android.systemui.desktop_sizing">36dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">32dp</dimen>
     <dimen
         name="toolbar_button_icon_size"
         android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="toolbar_button_size"
-        android:featureFlag="com.android.systemui.desktop_sizing">36dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">48dp</dimen>
 
     <!-- QS shade overlay volume bar -->
     <dimen

@@ -19,8 +19,8 @@ package com.android.systemui.qs.panels.ui.compose.toolbar
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -60,12 +60,19 @@ fun SecurityInfo(
     CompositionLocalProvider(
         value = LocalContentColor provides MaterialTheme.colorScheme.onSurface
     ) {
+        val buttonCornerRadius = IconButtonDimensions.BackgroundCornerRadius
         Expandable(
             controller =
-                rememberExpandableController(color = Color.Transparent, shape = CircleShape),
+                rememberExpandableController(
+                    color = Color.Transparent,
+                    shape = RoundedCornerShape(buttonCornerRadius),
+                ),
             modifier =
                 modifier
-                    .borderOnFocus(color = MaterialTheme.colorScheme.secondary, CornerSize(0))
+                    .borderOnFocus(
+                        color = MaterialTheme.colorScheme.secondary,
+                        cornerSize = CornerSize(buttonCornerRadius),
+                    )
                     .semantics {
                         if (onClick != null) {
                             role = Role.Button
@@ -78,7 +85,7 @@ fun SecurityInfo(
                 Icon(
                     icon = viewModel.model.icon,
                     modifier =
-                        Modifier.minimumInteractiveComponentSize().size(24.dp).semantics {
+                        Modifier.minimumInteractiveComponentSize().size(20.dp).semantics {
                             if (showCollapsed) {
                                 contentDescription = viewModel.model.text
                             }

@@ -267,6 +267,10 @@ fun DefaultEditTileGrid(
             IconButton(
                 enabled = snapshotViewModel.canUndo,
                 onClick = snapshotViewModel::undo,
+                shape =
+                    RoundedCornerShape(
+                        dimensionResource(R.dimen.qs_shape_toolbar_button_background_corner_radius)
+                    ),
                 colors =
                     IconButtonDefaults.iconButtonColors(
                         containerColor = LocalAndroidColorScheme.current.surfaceEffect1,
@@ -276,6 +280,7 @@ fun DefaultEditTileGrid(
                 Icon(
                     Undo,
                     contentDescription = stringResource(id = com.android.internal.R.string.undo),
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }
@@ -577,17 +582,19 @@ private fun RemoveButton(
             else MaterialTheme.colorScheme.onSurface.copy(alpha = .38f)
         }
 
+    val actionCornerRadius = dimensionResource(id = R.dimen.qs_shape_tile_active_corner_radius)
     // Using a Box instead of a Button to animate the colors
     Box(
         modifier
+            .requiredHeightIn(min = 48.dp)
             .drawBehind {
                 drawRoundRect(
                     color = backgroundColor,
-                    cornerRadius = CornerRadius(size.height / 2f),
+                    cornerRadius = CornerRadius(actionCornerRadius.toPx()),
                 )
             }
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(10.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         BasicText(
             text = stringResource(R.string.qs_customize_remove),
@@ -731,6 +738,10 @@ private fun AnimatedAvailableTilesGrid(
 
                 TextButton(
                     onClick = { onEditAction(EditAction.ResetGrid) },
+                    shape =
+                        RoundedCornerShape(
+                            dimensionResource(id = R.dimen.qs_shape_tile_active_corner_radius)
+                        ),
                     colors =
                         ButtonDefaults.textButtonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -1089,6 +1100,7 @@ private fun LazyGridItemScope.TileGridCell(
                     cornerRadius = InactiveTileCornerRadius,
                     alpha = { containerAlpha },
                     color = { colors.background },
+                    borderColor = { colors.border },
                 )
                 .keyboardShortcuts(cell.tile.tileSpec, selectionState) {
                     onResize(FinalResizeOperation(cell.tile.tileSpec, !cell.isIcon))
@@ -1112,6 +1124,7 @@ private fun CategoryHeader(category: TileCategory, modifier: Modifier = Modifier
             painter = painterResource(category.iconId),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.size(20.dp),
         )
         Text(
             text = category.label.load() ?: "",
@@ -1186,7 +1199,11 @@ private fun AvailableTileGridCell(
                         MaterialTheme.colorScheme.secondary,
                         CornerSize(InactiveTileCornerRadius),
                     )
-                    .tileBackground(cornerRadius = InactiveTileCornerRadius) { colors.background }
+                    .tileBackground(
+                        cornerRadius = InactiveTileCornerRadius,
+                        color = { colors.background },
+                        borderColor = { colors.border },
+                    )
                     .clickable(
                         enabled = !cell.isCurrent,
                         onClick = onClick,
@@ -1331,11 +1348,7 @@ fun EditTile(
                 .largeTilePadding(),
     ) {
         // Icon
-        Box(
-            Modifier.size(ToggleTargetSize).thenIf(tile.isDualTarget) {
-                Modifier.drawBehind { drawCircle(colors.iconBackground, alpha = progress()) }
-            }
-        ) {
+        Box(Modifier.size(ToggleTargetSize)) {
             SmallTileContent(
                 iconProvider = { tile.icon },
                 color = colors.icon,
@@ -1367,9 +1380,13 @@ private fun Modifier.tileBackground(
     cornerRadius: Dp,
     alpha: () -> Float = { 1f },
     color: () -> Color,
+    borderColor: () -> Color = { Color.Transparent },
 ): Modifier {
-    // Clip tile contents from overflowing past the tile
-    return clip(RoundedCornerShape(cornerRadius)).drawBehind { drawRect(color(), alpha = alpha()) }
+    val shape = RoundedCornerShape(cornerRadius)
+    // Clip tile contents from overflowing past the tile.
+    return clip(shape)
+        .drawBehind { drawRect(color(), alpha = alpha()) }
+        .border(width = 1.dp, color = borderColor(), shape = shape)
 }
 
 private fun Modifier.keyboardShortcuts(
@@ -1416,14 +1433,17 @@ private object EditModeTileDefaults {
         )
 
     @Composable
-    fun editTileColors(): TileColors =
-        TileColors(
-            background = LocalAndroidColorScheme.current.surfaceEffect1,
-            iconBackground = LocalAndroidColorScheme.current.surfaceEffect2,
+    fun editTileColors(): TileColors {
+        val surface = LocalAndroidColorScheme.current.surfaceEffect1
+        return TileColors(
+            background = surface,
+            iconBackground = surface,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onSurface,
+            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f),
         )
+    }
 }
 
 private const val EDIT_MODE_ROOT_TEST_TAG = "EditModeRoot"

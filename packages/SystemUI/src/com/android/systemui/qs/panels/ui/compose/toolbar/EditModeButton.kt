@@ -17,6 +17,7 @@
 package com.android.systemui.qs.panels.ui.compose.toolbar
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,6 +47,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
@@ -117,7 +119,7 @@ fun EditModeButton(
             },
             tooltip = {
                 PlainTooltip(
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.qs_tooltip_corner_radius)),
                     containerColor = tertiaryColor,
                     contentColor = MaterialTheme.colorScheme.onTertiary,
                     shadowElevation = EditModeButtonDefaults.TooltipShadowElevation,
@@ -146,20 +148,23 @@ fun EditModeButton(
                 }
             },
         ) {
+            val buttonCornerRadius =
+                dimensionResource(R.dimen.qs_shape_toolbar_button_background_corner_radius)
             IconButton(
                 onClick = viewModel::onButtonClick,
-                shape = RoundedCornerShape(CornerSize(28.dp)),
+                shape = RoundedCornerShape(buttonCornerRadius),
                 modifier =
                     Modifier.sysuiResTag("qs_edit_mode_button")
                         .borderOnFocus(
                             color = MaterialTheme.colorScheme.secondary,
-                            cornerSize = CornerSize(24.dp),
+                            cornerSize = CornerSize(buttonCornerRadius),
                         ),
             ) {
                 Icon(
                     imageVector = Edit,
                     contentDescription =
                         stringResource(id = R.string.accessibility_quick_settings_edit),
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }

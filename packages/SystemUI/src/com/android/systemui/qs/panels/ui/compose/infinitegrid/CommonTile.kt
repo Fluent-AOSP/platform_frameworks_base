@@ -221,7 +221,7 @@ fun LargeTileLabels(
             TileLabel(
                 secondaryLabel ?: "",
                 color = { animatedSecondaryLabelColor },
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodySmall,
                 isVisible = isVisible,
                 modifier =
                     Modifier.thenIf(
@@ -498,7 +498,6 @@ object CommonTileDefaults {
     @Composable
     fun longPressLabelMoreDetails() =
         stringResource(id = R.string.accessibility_long_click_tile_details)
-
 }
 
 /** Same as Image, but it doesn't clip its content. */

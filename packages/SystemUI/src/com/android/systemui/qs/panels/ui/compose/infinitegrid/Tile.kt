@@ -28,6 +28,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.Orientation
@@ -67,6 +68,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.trace
 import com.android.app.tracing.coroutines.launchTraced as launch
 import com.android.compose.animation.Expandable
@@ -179,6 +181,7 @@ fun ContentScope.Tile(
         // TODO(b/361789146): Draw the shapes instead of clipping
         val tileShape by TileDefaults.animateTileShapeAsState(uiState)
         val animatedColor by animateColorAsState(colors.background, label = "QSTileBackgroundColor")
+        val animatedBorderColor by animateColorAsState(colors.border, label = "QSTileBorderColor")
         val isDualTarget = uiState.handlesToggleClick
         val interactionSource = remember { MutableInteractionSource() }
 
@@ -228,6 +231,7 @@ fun ContentScope.Tile(
                 modifier =
                     modifier
                         .then(surfaceRevealModifier)
+                        .border(width = 1.dp, color = animatedBorderColor, shape = tileShape)
                         .borderOnFocus(
                             color = MaterialTheme.colorScheme.secondary,
                             tileShape.topEnd,
@@ -416,10 +420,12 @@ fun SmallStaticTile(
 ) {
     val colors = TileDefaults.getColorForState(uiState = uiState, iconOnly = true)
 
+    val tileShape = TileDefaults.animateTileShapeAsState(uiState).value
     Box(
         modifier
-            .clip(TileDefaults.animateTileShapeAsState(uiState).value)
+            .clip(tileShape)
             .background(colors.background)
+            .border(width = 1.dp, color = colors.border, shape = tileShape)
             .size(TileHeight)
             .clickable(onClick = onClick)
     ) {
@@ -440,10 +446,12 @@ fun LargeStaticTile(
 ) {
     val colors = TileDefaults.getColorForState(uiState = uiState, iconOnly = false)
 
+    val tileShape = TileDefaults.animateTileShapeAsState(uiState).value
     Box(
         modifier
-            .clip(TileDefaults.animateTileShapeAsState(uiState).value)
+            .clip(tileShape)
             .background(colors.background)
+            .border(width = 1.dp, color = colors.border, shape = tileShape)
             .height(TileHeight)
             .clickable(onClick = onClick)
             .largeTilePadding()
@@ -517,6 +525,7 @@ data class TileColors(
     val label: Color,
     val secondaryLabel: Color,
     val icon: Color,
+    val border: Color = Color.Transparent,
 )
 
 @VisibleForTesting
@@ -531,45 +540,35 @@ private object TileDefaults {
     fun activeTileColors(): TileColors =
         TileColors(
             background = MaterialTheme.colorScheme.primary,
-            iconBackground = MaterialTheme.colorScheme.primary,
+            iconBackground = Color.Transparent,
             label = MaterialTheme.colorScheme.onPrimary,
             secondaryLabel = MaterialTheme.colorScheme.onPrimary,
             icon = MaterialTheme.colorScheme.onPrimary,
+            border = Color.Transparent,
         )
 
-    /** An active tile with dual target only show the active color on the icon */
+    /** Active split controls use one Fluent accent surface; interaction regions remain separate. */
     @Composable
     @ReadOnlyComposable
-    fun activeDualTargetTileColors(): TileColors =
-        TileColors(
-            background = LocalAndroidColorScheme.current.surfaceEffect1,
-            iconBackground = MaterialTheme.colorScheme.primary,
-            label = MaterialTheme.colorScheme.onSurface,
-            secondaryLabel = MaterialTheme.colorScheme.onSurface,
-            icon = MaterialTheme.colorScheme.onPrimary,
-        )
+    fun activeDualTargetTileColors(): TileColors = activeTileColors()
 
     @Composable
     @ReadOnlyComposable
-    fun inactiveDualTargetTileColors(): TileColors =
-        TileColors(
-            background = LocalAndroidColorScheme.current.surfaceEffect1,
-            iconBackground = LocalAndroidColorScheme.current.surfaceEffect2,
-            label = MaterialTheme.colorScheme.onSurface,
-            secondaryLabel = MaterialTheme.colorScheme.onSurface,
-            icon = MaterialTheme.colorScheme.onSurface,
-        )
+    fun inactiveDualTargetTileColors(): TileColors = inactiveTileColors()
 
     @Composable
     @ReadOnlyComposable
-    fun inactiveTileColors(): TileColors =
-        TileColors(
-            background = LocalAndroidColorScheme.current.surfaceEffect1,
+    fun inactiveTileColors(): TileColors {
+        val surface = LocalAndroidColorScheme.current.surfaceEffect1
+        return TileColors(
+            background = surface,
             iconBackground = Color.Transparent,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onSurface,
+            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f),
         )
+    }
 
     @Composable
     @ReadOnlyComposable
@@ -578,10 +577,11 @@ private object TileDefaults {
         val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .38f)
         return TileColors(
             background = surfaceColor,
-            iconBackground = surfaceColor,
+            iconBackground = Color.Transparent,
             label = onSurfaceVariantColor,
             secondaryLabel = onSurfaceVariantColor,
             icon = onSurfaceVariantColor,
+            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .2f),
         )
     }
 

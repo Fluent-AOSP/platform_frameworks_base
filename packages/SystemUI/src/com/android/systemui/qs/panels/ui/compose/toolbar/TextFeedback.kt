@@ -54,18 +54,18 @@ fun TextFeedback(viewModel: TextFeedbackViewModel, modifier: Modifier = Modifier
                                 dimensionResource(R.dimen.qs_shape_toolbar_feedback_corner_radius)
                             ),
                     )
-                    .height(36.dp)
+                    .height(32.dp)
                     .padding(horizontal = 8.dp),
         ) {
             Icon(
                 viewModel.model.icon,
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
             Text(
                 text = viewModel.model.text,
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodySmall,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
             )

@@ -88,19 +88,21 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     }
 
     @Test
-    fun semanticShapes_keepSubtleStateDistinction() {
+    fun semanticShapes_useFluentControlGeometry() {
+        assertThat(dimensionDp(R.dimen.qs_shape_icon_active_corner_radius)).isEqualTo(4f)
         assertThat(dimension(R.dimen.qs_shape_icon_active_corner_radius))
-            .isLessThan(dimension(R.dimen.qs_shape_icon_inactive_corner_radius))
+            .isEqualTo(dimension(R.dimen.qs_shape_icon_inactive_corner_radius))
+        assertThat(dimensionDp(R.dimen.qs_shape_tile_active_corner_radius)).isEqualTo(4f)
         assertThat(dimension(R.dimen.qs_shape_tile_active_corner_radius))
-            .isLessThan(dimension(R.dimen.qs_shape_tile_inactive_corner_radius))
+            .isEqualTo(dimension(R.dimen.qs_shape_tile_inactive_corner_radius))
     }
 
     @Test
     fun compactTileLayout_usesFoundationGeometry() {
         assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
 
-        assertThat(dimensionDp(R.dimen.qs_size_tile_icon_only_icon)).isEqualTo(28f)
-        assertThat(dimensionDp(R.dimen.qs_size_tile_labeled_icon)).isEqualTo(24f)
+        assertThat(dimensionDp(R.dimen.qs_size_tile_icon_only_icon)).isEqualTo(20f)
+        assertThat(dimensionDp(R.dimen.qs_size_tile_labeled_icon)).isEqualTo(20f)
         assertThat(dimensionDp(R.dimen.qs_spacing_tile_content)).isEqualTo(8f)
         assertThat(dimensionDp(R.dimen.qs_spacing_tile_start)).isEqualTo(8f)
         assertThat(dimensionDp(R.dimen.qs_spacing_tile_end)).isEqualTo(12f)
@@ -111,12 +113,21 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     fun compactChrome_usesFoundationGeometry() {
         assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
 
-        assertThat(dimensionDp(R.dimen.qs_shape_panel_corner_radius)).isEqualTo(28f)
-        assertThat(dimensionDp(R.dimen.qs_shape_brightness_container_corner_radius)).isEqualTo(16f)
-        assertThat(dimensionDp(R.dimen.qs_shape_edit_grid_corner_radius)).isEqualTo(20f)
+        assertThat(dimensionDp(R.dimen.qs_shape_panel_corner_radius)).isEqualTo(8f)
+        assertThat(dimensionDp(R.dimen.qs_shape_brightness_container_corner_radius)).isEqualTo(4f)
+        assertThat(dimensionDp(R.dimen.qs_shape_edit_grid_corner_radius)).isEqualTo(8f)
         assertThat(dimensionDp(R.dimen.qs_shape_toolbar_button_background_corner_radius))
-            .isEqualTo(10f)
-        assertThat(dimensionDp(R.dimen.qs_shape_toolbar_feedback_corner_radius)).isEqualTo(10f)
+            .isEqualTo(4f)
+        assertThat(dimensionDp(R.dimen.qs_shape_toolbar_feedback_corner_radius)).isEqualTo(4f)
+        assertThat(dimensionDp(R.dimen.shade_panel_margin_horizontal)).isEqualTo(12f)
+        assertThat(dimensionDp(R.dimen.overlay_qs_layout_horizontal_padding)).isEqualTo(12f)
+        assertThat(dimensionDp(R.dimen.overlay_qs_layout_vertical_padding)).isEqualTo(12f)
+        assertThat(dimensionDp(R.dimen.overlay_qs_layout_brightness_icon_size)).isEqualTo(20f)
+        assertThat(dimensionDp(R.dimen.overlay_qs_layout_brightness_track_height)).isEqualTo(32f)
+        assertThat(dimensionDp(R.dimen.overlay_qs_layout_brightness_thumb_height)).isEqualTo(48f)
+        assertThat(dimensionDp(R.dimen.toolbar_button_colored_background_size)).isEqualTo(32f)
+        assertThat(dimensionDp(R.dimen.toolbar_button_icon_size)).isEqualTo(20f)
+        assertThat(dimensionDp(R.dimen.toolbar_button_size)).isEqualTo(48f)
         assertThat(dimension(R.dimen.qs_shape_brightness_container_corner_radius))
             .isLessThan(dimension(R.dimen.overlay_qs_layout_brightness_track_height) / 2f)
         assertThat(dimension(R.dimen.qs_shape_toolbar_button_background_corner_radius))
@@ -128,8 +139,8 @@ class QuickSettingsTokenTest : SysuiTestCase() {
         assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
         val minimumTouchTarget = 48 * context.resources.displayMetrics.density
 
-        assertThat(dimensionDp(R.dimen.common_tile_default_tile_height)).isEqualTo(72f)
-        assertThat(dimensionDp(R.dimen.common_tile_default_toggle_target_size)).isEqualTo(56f)
+        assertThat(dimensionDp(R.dimen.common_tile_default_tile_height)).isEqualTo(56f)
+        assertThat(dimensionDp(R.dimen.common_tile_default_toggle_target_size)).isEqualTo(48f)
         assertThat(dimension(R.dimen.common_tile_default_tile_height)).isAtLeast(minimumTouchTarget)
         assertThat(dimension(R.dimen.common_tile_default_toggle_target_size))
             .isAtLeast(minimumTouchTarget)

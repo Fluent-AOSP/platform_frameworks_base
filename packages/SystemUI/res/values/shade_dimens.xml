@@ -21,30 +21,30 @@
 
     <!--
     The horizontal distance between the shade overlay panel (both notifications and quick settings)
-    and the edge of the screen. This is zero only on Compact screens (< w600dp).
+    and the edge of the screen. Compact layouts use the Fluent small-window gutter.
     -->
-    <dimen name="shade_panel_margin_horizontal">0dp</dimen>
+    <dimen name="shade_panel_margin_horizontal">12dp</dimen>
 
-    <dimen name="qs_shape_panel_corner_radius">28dp</dimen>
+    <dimen name="qs_shape_panel_corner_radius">8dp</dimen>
     <dimen name="overlay_shade_panel_shape_radius">@dimen/qs_shape_panel_corner_radius</dimen>
 
     <!-- QS shade overlay common tiles -->
     <!-- Component-semantic shape tokens keep tile styling separate from state behavior. -->
-    <dimen name="qs_shape_brightness_container_corner_radius">16dp</dimen>
-    <dimen name="qs_shape_edit_grid_corner_radius">20dp</dimen>
-    <dimen name="qs_shape_icon_active_corner_radius">12dp</dimen>
-    <dimen name="qs_shape_icon_inactive_corner_radius">16dp</dimen>
-    <dimen name="qs_shape_tile_active_corner_radius">16dp</dimen>
-    <dimen name="qs_shape_tile_inactive_corner_radius">20dp</dimen>
-    <dimen name="qs_shape_toolbar_button_background_corner_radius">10dp</dimen>
-    <dimen name="qs_shape_toolbar_feedback_corner_radius">10dp</dimen>
-    <dimen name="qs_size_tile_icon_only_icon">28dp</dimen>
-    <dimen name="qs_size_tile_labeled_icon">24dp</dimen>
+    <dimen name="qs_shape_brightness_container_corner_radius">4dp</dimen>
+    <dimen name="qs_shape_edit_grid_corner_radius">8dp</dimen>
+    <dimen name="qs_shape_icon_active_corner_radius">4dp</dimen>
+    <dimen name="qs_shape_icon_inactive_corner_radius">4dp</dimen>
+    <dimen name="qs_shape_tile_active_corner_radius">4dp</dimen>
+    <dimen name="qs_shape_tile_inactive_corner_radius">4dp</dimen>
+    <dimen name="qs_shape_toolbar_button_background_corner_radius">4dp</dimen>
+    <dimen name="qs_shape_toolbar_feedback_corner_radius">4dp</dimen>
+    <dimen name="qs_size_tile_icon_only_icon">20dp</dimen>
+    <dimen name="qs_size_tile_labeled_icon">20dp</dimen>
     <dimen name="qs_spacing_tile_content">8dp</dimen>
     <dimen name="qs_spacing_tile_start">8dp</dimen>
     <dimen name="qs_spacing_tile_end">12dp</dimen>
     <dimen name="qs_spacing_tile_dual_target_end">8dp</dimen>
-    <dimen name="qs_tooltip_corner_radius">16dp</dimen>
+    <dimen name="qs_tooltip_corner_radius">4dp</dimen>
     <dimen name="common_tile_default_active_icon_corner_radius">@dimen/qs_shape_icon_active_corner_radius</dimen>
     <dimen name="common_tile_default_active_tile_corner_radius">@dimen/qs_shape_tile_active_corner_radius</dimen>
     <dimen name="common_tile_default_content_spacing">@dimen/qs_spacing_tile_content</dimen>
@@ -55,27 +55,27 @@
     <dimen name="common_tile_default_inactive_tile_corner_radius">@dimen/qs_shape_tile_inactive_corner_radius</dimen>
     <dimen name="common_tile_default_large_tile_icon_size">@dimen/qs_size_tile_labeled_icon</dimen>
     <dimen name="common_tile_default_start_padding">@dimen/qs_spacing_tile_start</dimen>
-    <dimen name="common_tile_default_tile_height">72dp</dimen>
-    <dimen name="common_tile_default_toggle_target_size">56dp</dimen>
+    <dimen name="common_tile_default_tile_height">56dp</dimen>
+    <dimen name="common_tile_default_toggle_target_size">48dp</dimen>
 
     <!-- QS shade overlay brightness bar -->
-    <dimen name="overlay_qs_layout_brightness_icon_size">28dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_thumb_height">52dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_icon_size">20dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_thumb_height">48dp</dimen>
     <dimen name="overlay_qs_layout_brightness_thumb_width">4dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_track_height">40dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_vertical_padding">6dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_track_height">32dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_vertical_padding">4dp</dimen>
     <dimen name="overlay_qs_layout_brightness_rounded_corner">@dimen/qs_shape_brightness_container_corner_radius</dimen>
-    <dimen name="overlay_qs_layout_brightness_frame_width">10dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_frame_height">6dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_frame_width">8dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_frame_height">4dp</dimen>
     <dimen name="overlay_qs_layout_toolbar_height">48dp</dimen>
 
     <!-- QS shade layout -->
     <!-- The horizontal padding and the vertical padding can be different in alternative resources -->
-    <dimen name="overlay_qs_layout_horizontal_padding">16dp</dimen>
-    <dimen name="overlay_qs_layout_vertical_padding">16dp</dimen>
+    <dimen name="overlay_qs_layout_horizontal_padding">12dp</dimen>
+    <dimen name="overlay_qs_layout_vertical_padding">12dp</dimen>
 
     <!-- QS shade overlay volume bar -->
-    <dimen name="overlay_qs_layout_volume_extra_padding">16dp</dimen>
+    <dimen name="overlay_qs_layout_volume_extra_padding">12dp</dimen>
     <dimen name="overlay_qs_layout_volume_vertical_padding">4dp</dimen>
     <dimen name="overlay_qs_layout_volume_thumb_height">
         @dimen/overlay_qs_layout_brightness_thumb_height
@@ -89,8 +89,8 @@
 
     <!-- QS shade overlay toolbar -->
     <dimen name="toolbar_bottom_padding">8dp</dimen>
-    <dimen name="toolbar_button_colored_background_size">36dp</dimen>
-    <dimen name="toolbar_button_icon_size">24dp</dimen>
+    <dimen name="toolbar_button_colored_background_size">32dp</dimen>
+    <dimen name="toolbar_button_icon_size">20dp</dimen>
     <dimen name="toolbar_button_size">48dp</dimen>
 
     <!-- QS shade focus rings -->

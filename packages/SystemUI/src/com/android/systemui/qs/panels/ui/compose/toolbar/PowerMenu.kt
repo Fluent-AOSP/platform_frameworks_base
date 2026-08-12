@@ -25,9 +25,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -35,6 +37,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
@@ -50,6 +53,7 @@ import com.android.systemui.common.ui.compose.Icon
 import com.android.systemui.globalactions.ui.viewmodel.GlobalActionUiState
 import com.android.systemui.lifecycle.rememberViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.toolbar.PowerMenuViewModel
+import com.android.systemui.res.R
 
 /**
  * A composable that displays the inline Power Menu.
@@ -80,7 +84,7 @@ fun PowerMenu(
                 modifier
                     .padding(top = PowerMenuConstants.MenuTopPadding)
                     .width(PowerMenuConstants.MenuWidth),
-            shape = RoundedCornerShape(PowerMenuConstants.MenuCornerRadius),
+            shape = RoundedCornerShape(dimensionResource(R.dimen.qs_shape_panel_corner_radius)),
         ) {
             Column {
                 viewModel.visibleActions.forEach { action -> key(action.key) { ActionRow(action) } }
@@ -106,8 +110,12 @@ private fun ActionRow(viewModel: GlobalActionUiState.Visible, modifier: Modifier
                 .padding(horizontal = PowerMenuConstants.ActionHorizontalPadding)
                 .height(PowerMenuConstants.ActionHeight),
     ) {
-        Icon(viewModel.icon)
-        Text(modifier = Modifier.basicMarquee(), text = stringResource(viewModel.textResId))
+        Icon(viewModel.icon, modifier = Modifier.size(20.dp))
+        Text(
+            modifier = Modifier.basicMarquee(),
+            text = stringResource(viewModel.textResId),
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
@@ -118,7 +126,12 @@ private object AnchorBottomEndProvider : PopupPositionProvider {
         layoutDirection: LayoutDirection,
         popupContentSize: IntSize,
     ): IntOffset {
-        val x = anchorBounds.right - popupContentSize.width
+        val x =
+            if (layoutDirection == LayoutDirection.Ltr) {
+                anchorBounds.right - popupContentSize.width
+            } else {
+                anchorBounds.left
+            }
         val y = anchorBounds.bottom
         return IntOffset(x, y)
     }
@@ -127,8 +140,7 @@ private object AnchorBottomEndProvider : PopupPositionProvider {
 private object PowerMenuConstants {
     val MenuWidth = 172.dp
     val MenuTopPadding = 8.dp
-    val MenuCornerRadius = 20.dp
-    val ActionHeight = 44.dp
+    val ActionHeight = 48.dp
     val ActionHorizontalPadding = 12.dp
     val ActionIconTextSpacing = 12.dp
 }

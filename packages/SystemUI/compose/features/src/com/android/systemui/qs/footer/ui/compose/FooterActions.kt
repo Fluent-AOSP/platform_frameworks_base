@@ -41,7 +41,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -188,7 +187,7 @@ fun FooterActions(viewModel: FooterActionsViewModel, modifier: Modifier = Modifi
         if (!notificationShadeBlur()) colorAttr(R.attr.underSurface) else Color.Transparent
     val backgroundAlphaValue = if (!notificationShadeBlur()) backgroundAlpha::value else ({ 0f })
     val contentColor = MaterialTheme.colorScheme.onSurface
-    val backgroundTopRadius = dimensionResource(R.dimen.qs_corner_radius)
+    val backgroundTopRadius = dimensionResource(R.dimen.qs_shape_panel_corner_radius)
     val backgroundModifier =
         remember(backgroundColor, backgroundAlphaValue, backgroundTopRadius) {
             Modifier.animatedBackground(
@@ -297,7 +296,7 @@ private fun AnimatedFooterTextButton(
             .graphicsLayer { this.alpha = alpha }
     ) {
         val colors = textButtonColors()
-        CircleExpandable(
+        FooterExpandable(
             color = colors.background,
             contentColor = colors.content,
             borderStroke = colors.border,
@@ -387,8 +386,9 @@ private fun IconButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = buttonColorsForModel(model)
-    CircleExpandable(
+    FooterExpandable(
         color = colors.background,
+        borderStroke = colors.border,
         onClick = model.onClick,
         modifier = modifier,
         useModifierBasedImplementation = useModifierBasedExpandable,
@@ -427,7 +427,7 @@ private fun NumberButton(
     val interactionSource = remember { MutableInteractionSource() }
 
     val colors = numberButtonColors()
-    CircleExpandable(
+    FooterExpandable(
         color = colors.background,
         onClick = onClick,
         interactionSource = interactionSource,
@@ -437,7 +437,11 @@ private fun NumberButton(
         Box(Modifier.size(FooterButtonHeight)) {
             Box(
                 Modifier.fillMaxSize()
-                    .clip(CircleShape)
+                    .clip(
+                        RoundedCornerShape(
+                            dimensionResource(R.dimen.qs_shape_tile_active_corner_radius)
+                        )
+                    )
                     .indication(interactionSource, LocalIndication.current)
             ) {
                 Text(
@@ -462,7 +466,7 @@ private fun NumberButton(
 }
 
 @Composable
-private fun CircleExpandable(
+private fun FooterExpandable(
     color: Color,
     modifier: Modifier = Modifier,
     contentColor: Color = contentColorFor(color),
@@ -472,17 +476,18 @@ private fun CircleExpandable(
     useModifierBasedImplementation: Boolean,
     content: @Composable (Expandable) -> Unit,
 ) {
+    val cornerRadius = dimensionResource(R.dimen.qs_shape_tile_active_corner_radius)
     Expandable(
         color = color,
         contentColor = contentColor,
         borderStroke = borderStroke,
-        shape = CircleShape,
+        shape = RoundedCornerShape(cornerRadius),
         onClick = onClick,
         interactionSource = interactionSource,
         modifier =
             modifier.borderOnFocus(
                 color = MaterialTheme.colorScheme.secondary,
-                cornerSize = CornerSize(percent = 50),
+                cornerSize = CornerSize(cornerRadius),
             ),
         useModifierBasedImplementation = useModifierBasedImplementation,
         content = content,
@@ -511,7 +516,7 @@ private fun TextButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = textButtonColors()
-    CircleExpandable(
+    FooterExpandable(
         color = colors.background,
         contentColor = colors.content,
         borderStroke = colors.border,
@@ -528,7 +533,7 @@ private fun TextButton(
             Text(
                 text,
                 Modifier.weight(1f),
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 letterSpacing = 0.em,
                 color = colors.content,
                 maxLines = 1,
@@ -570,7 +575,7 @@ private fun TextButtonContent(
         Text(
             text,
             Modifier.weight(1f),
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.bodyMedium,
             letterSpacing = 0.em,
             color = contentColor,
             maxLines = 1,
@@ -663,7 +668,11 @@ private fun buttonColorsForModel(footerAction: FooterActionsButtonViewModel): Bu
     }
 }
 
-private data class ButtonColors(val icon: Color, val background: Color)
+private data class ButtonColors(
+    val icon: Color,
+    val background: Color,
+    val border: BorderStroke? = null,
+)
 
 private data class TextButtonColors(
     val content: Color,
@@ -690,6 +699,7 @@ private object FooterActionsDefaults {
         ButtonColors(
             icon = MaterialTheme.colorScheme.onSurface,
             background = LocalAndroidColorScheme.current.surfaceEffect1,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f)),
         )
 
     @Composable
@@ -698,6 +708,7 @@ private object FooterActionsDefaults {
         ButtonColors(
             icon = Color.Unspecified,
             background = LocalAndroidColorScheme.current.surfaceEffect1,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f)),
         )
 
     @Composable
@@ -706,7 +717,7 @@ private object FooterActionsDefaults {
         TextButtonColors(
             content = MaterialTheme.colorScheme.onSurface,
             background = LocalAndroidColorScheme.current.surfaceEffect1,
-            border = null,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f)),
         )
 
     @Composable
