@@ -146,7 +146,7 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
 
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("qs_tile_icon"), useUnmergedTree = true)
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 24.dp else 32.dp)
+                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 24.dp else 28.dp)
 
             // Verify the QS shade overlay's width.
             composeTestRule
@@ -171,7 +171,7 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
 
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("qs_tile_icon"), useUnmergedTree = true)
-                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 20.dp else 28.dp)
+                .assertHeightIsEqualTo(if (DesktopSizing.isEnabled) 20.dp else 24.dp)
         }
 
     @Test

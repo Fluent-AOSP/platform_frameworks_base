@@ -51,6 +51,34 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     }
 
     @Test
+    fun commonTileLayout_referencesSemanticQuickSettingsTokens() {
+        assertDimensionAlias(
+            R.dimen.common_tile_default_icon_size,
+            R.dimen.qs_size_tile_icon_only_icon,
+        )
+        assertDimensionAlias(
+            R.dimen.common_tile_default_large_tile_icon_size,
+            R.dimen.qs_size_tile_labeled_icon,
+        )
+        assertDimensionAlias(
+            R.dimen.common_tile_default_content_spacing,
+            R.dimen.qs_spacing_tile_content,
+        )
+        assertDimensionAlias(
+            R.dimen.common_tile_default_start_padding,
+            R.dimen.qs_spacing_tile_start,
+        )
+        assertDimensionAlias(
+            R.dimen.common_tile_default_end_padding,
+            R.dimen.qs_spacing_tile_end,
+        )
+        assertDimensionAlias(
+            R.dimen.common_tile_default_dual_target_end_padding,
+            R.dimen.qs_spacing_tile_dual_target_end,
+        )
+    }
+
+    @Test
     fun semanticShapes_keepSubtleStateDistinction() {
         assertThat(dimension(R.dimen.qs_shape_icon_active_corner_radius))
             .isLessThan(dimension(R.dimen.qs_shape_icon_inactive_corner_radius))
@@ -59,10 +87,24 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     }
 
     @Test
+    fun compactTileLayout_usesFoundationGeometry() {
+        assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
+
+        assertThat(dimensionDp(R.dimen.qs_size_tile_icon_only_icon)).isEqualTo(28f)
+        assertThat(dimensionDp(R.dimen.qs_size_tile_labeled_icon)).isEqualTo(24f)
+        assertThat(dimensionDp(R.dimen.qs_spacing_tile_content)).isEqualTo(8f)
+        assertThat(dimensionDp(R.dimen.qs_spacing_tile_start)).isEqualTo(8f)
+        assertThat(dimensionDp(R.dimen.qs_spacing_tile_end)).isEqualTo(12f)
+        assertThat(dimensionDp(R.dimen.qs_spacing_tile_dual_target_end)).isEqualTo(8f)
+    }
+
+    @Test
     fun compactTiles_preserveMinimumTouchTargets() {
         assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
         val minimumTouchTarget = 48 * context.resources.displayMetrics.density
 
+        assertThat(dimensionDp(R.dimen.common_tile_default_tile_height)).isEqualTo(72f)
+        assertThat(dimensionDp(R.dimen.common_tile_default_toggle_target_size)).isEqualTo(56f)
         assertThat(dimension(R.dimen.common_tile_default_tile_height))
             .isAtLeast(minimumTouchTarget)
         assertThat(dimension(R.dimen.common_tile_default_toggle_target_size))
@@ -79,4 +121,7 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     }
 
     private fun dimension(@DimenRes resource: Int): Float = context.resources.getDimension(resource)
+
+    private fun dimensionDp(@DimenRes resource: Int): Float =
+        dimension(resource) / context.resources.displayMetrics.density
 }

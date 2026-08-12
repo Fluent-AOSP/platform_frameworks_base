@@ -33,15 +33,23 @@
     <dimen name="qs_shape_icon_inactive_corner_radius">16dp</dimen>
     <dimen name="qs_shape_tile_active_corner_radius">16dp</dimen>
     <dimen name="qs_shape_tile_inactive_corner_radius">20dp</dimen>
+    <dimen name="qs_size_tile_icon_only_icon">28dp</dimen>
+    <dimen name="qs_size_tile_labeled_icon">24dp</dimen>
+    <dimen name="qs_spacing_tile_content">8dp</dimen>
+    <dimen name="qs_spacing_tile_start">8dp</dimen>
+    <dimen name="qs_spacing_tile_end">12dp</dimen>
+    <dimen name="qs_spacing_tile_dual_target_end">8dp</dimen>
     <dimen name="qs_tooltip_corner_radius">16dp</dimen>
     <dimen name="common_tile_default_active_icon_corner_radius">@dimen/qs_shape_icon_active_corner_radius</dimen>
     <dimen name="common_tile_default_active_tile_corner_radius">@dimen/qs_shape_tile_active_corner_radius</dimen>
-    <dimen name="common_tile_default_dual_target_end_padding">8dp</dimen>
-    <dimen name="common_tile_default_icon_size">32dp</dimen>
+    <dimen name="common_tile_default_content_spacing">@dimen/qs_spacing_tile_content</dimen>
+    <dimen name="common_tile_default_dual_target_end_padding">@dimen/qs_spacing_tile_dual_target_end</dimen>
+    <dimen name="common_tile_default_end_padding">@dimen/qs_spacing_tile_end</dimen>
+    <dimen name="common_tile_default_icon_size">@dimen/qs_size_tile_icon_only_icon</dimen>
     <dimen name="common_tile_default_inactive_icon_corner_radius">@dimen/qs_shape_icon_inactive_corner_radius</dimen>
     <dimen name="common_tile_default_inactive_tile_corner_radius">@dimen/qs_shape_tile_inactive_corner_radius</dimen>
-    <dimen name="common_tile_default_large_tile_icon_size">28dp</dimen>
-    <dimen name="common_tile_default_start_padding">8dp</dimen>
+    <dimen name="common_tile_default_large_tile_icon_size">@dimen/qs_size_tile_labeled_icon</dimen>
+    <dimen name="common_tile_default_start_padding">@dimen/qs_spacing_tile_start</dimen>
     <dimen name="common_tile_default_tile_height">72dp</dimen>
     <dimen name="common_tile_default_toggle_target_size">56dp</dimen>
 

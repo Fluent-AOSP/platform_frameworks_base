@@ -92,6 +92,7 @@ import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.ActiveTileCornerRadius
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.InactiveIconCornerRadius
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.InactiveTileCornerRadius
+import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.TileContentSpacing
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.TileHeight
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.longPressLabelMoreDetails
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.longPressLabelSettings
@@ -468,8 +469,9 @@ private fun Context.getTileIcon(icon: IconProvider): Icon {
     } ?: Icon.Resource(R.drawable.ic_error_outline, null)
 }
 
+@Composable
 fun tileHorizontalArrangement(): Arrangement.Horizontal {
-    return spacedBy(space = CommonTileDefaults.TileArrangementPadding, alignment = Alignment.Start)
+    return spacedBy(space = TileContentSpacing, alignment = Alignment.Start)
 }
 
 @Composable

@@ -95,7 +95,6 @@ import com.android.systemui.common.shared.model.Icon
 import com.android.systemui.common.ui.compose.Icon
 import com.android.systemui.common.ui.compose.load
 import com.android.systemui.compose.modifiers.sysuiResTag
-import com.android.systemui.flags.DesktopSizing
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.SideIconHeight
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.SideIconWidth
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.CommonTileDefaults.TILE_INITIAL_DELAY_MILLIS
@@ -451,23 +450,13 @@ object CommonTileDefaults {
     val LargeTileIconSize: Dp
         @Composable
         @ReadOnlyComposable
-        get() =
-            if (DesktopSizing.isEnabled) {
-                smallIconSize
-            } else {
-                largeIconSize
-            }
+        get() = dimensionResource(id = R.dimen.common_tile_default_large_tile_icon_size)
 
     // The size of the icon in the tile with an icon only.
     val SmallTileIconSize: Dp
         @Composable
         @ReadOnlyComposable
-        get() =
-            if (DesktopSizing.isEnabled) {
-                largeIconSize
-            } else {
-                smallIconSize
-            }
+        get() = dimensionResource(id = R.dimen.common_tile_default_icon_size)
 
     val StartPadding: Dp
         @Composable
@@ -484,10 +473,20 @@ object CommonTileDefaults {
         @ReadOnlyComposable
         get() = dimensionResource(id = R.dimen.common_tile_default_toggle_target_size)
 
+    val TileContentSpacing: Dp
+        @Composable
+        @ReadOnlyComposable
+        get() = dimensionResource(id = R.dimen.common_tile_default_content_spacing)
+
+    val TileEndPadding: Dp
+        @Composable
+        @ReadOnlyComposable
+        get() = dimensionResource(id = R.dimen.common_tile_default_end_padding)
+
     val SideIconWidth = 32.dp
     val SideIconHeight = 20.dp
     val ChevronSize = 14.dp
-    val TileEndPadding = 12.dp
+    // Edit-grid spacing remains independent from the content spacing inside a tile.
     val TileArrangementPadding = 6.dp
     val TileLabelBlurWidth = 32.dp
     const val TILE_MARQUEE_ITERATIONS = 1
@@ -500,15 +499,6 @@ object CommonTileDefaults {
     fun longPressLabelMoreDetails() =
         stringResource(id = R.string.accessibility_long_click_tile_details)
 
-    private val largeIconSize: Dp
-        @Composable
-        @ReadOnlyComposable
-        get() = dimensionResource(id = R.dimen.common_tile_default_large_tile_icon_size)
-
-    private val smallIconSize: Dp
-        @Composable
-        @ReadOnlyComposable
-        get() = dimensionResource(id = R.dimen.common_tile_default_icon_size)
 }
 
 /** Same as Image, but it doesn't clip its content. */
