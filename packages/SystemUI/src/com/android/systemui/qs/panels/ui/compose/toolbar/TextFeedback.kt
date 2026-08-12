@@ -22,12 +22,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android.compose.theme.LocalAndroidColorScheme
@@ -35,6 +36,7 @@ import com.android.systemui.common.ui.compose.Icon
 import com.android.systemui.compose.modifiers.sysuiResTag
 import com.android.systemui.qs.panels.ui.compose.toolbar.TextFeedback.tag
 import com.android.systemui.qs.panels.ui.viewmodel.TextFeedbackViewModel
+import com.android.systemui.res.R
 
 @Composable
 fun TextFeedback(viewModel: TextFeedbackViewModel, modifier: Modifier = Modifier) {
@@ -47,7 +49,10 @@ fun TextFeedback(viewModel: TextFeedbackViewModel, modifier: Modifier = Modifier
                     .tag()
                     .background(
                         color = LocalAndroidColorScheme.current.surfaceEffect2,
-                        shape = CircleShape,
+                        shape =
+                            RoundedCornerShape(
+                                dimensionResource(R.dimen.qs_shape_toolbar_feedback_corner_radius)
+                            ),
                     )
                     .height(36.dp)
                     .padding(horizontal = 8.dp),

@@ -418,7 +418,9 @@ fun BrightnessSliderContainer(
             modifier =
                 Modifier.borderOnFocus(
                         color = MaterialTheme.colorScheme.secondary,
-                        cornerSize = CornerSize(SliderTrackRoundedCorner),
+                        cornerSize = CornerSize(dimensions.backgroundRoundedCorner),
+                        paddingHorizontal = dimensions.backgroundFrameWidth,
+                        paddingVertical = dimensions.backgroundFrameHeight,
                     )
                     .then(if (viewModel.showMirror) Modifier.drawInOverlay() else Modifier)
                     .sliderBackground(

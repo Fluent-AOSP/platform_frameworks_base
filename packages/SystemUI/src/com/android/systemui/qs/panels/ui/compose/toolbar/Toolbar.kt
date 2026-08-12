@@ -219,7 +219,10 @@ private fun IconButton(
         Box(
             modifier =
                 Modifier.size(IconButtonDimensions.ColoredBackgroundSize)
-                    .background(color = protectionColor, shape = CircleShape),
+                    .background(
+                        color = protectionColor,
+                        shape = RoundedCornerShape(IconButtonDimensions.BackgroundCornerRadius),
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             ToolbarIcon(
@@ -351,6 +354,11 @@ private object PowerMenuToggleButtonConstants {
 }
 
 object IconButtonDimensions {
+    val BackgroundCornerRadius: Dp
+        @Composable
+        @ReadOnlyComposable
+        get() = dimensionResource(id = R.dimen.qs_shape_toolbar_button_background_corner_radius)
+
     val ColoredBackgroundSize: Dp
         @Composable
         @ReadOnlyComposable

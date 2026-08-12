@@ -185,7 +185,6 @@ import com.android.systemui.qs.panels.ui.compose.infinitegrid.EditModeTileDefaul
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.EditModeTileDefaults.AVAILABLE_TILES_GRID_ALPHA
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.EditModeTileDefaults.AvailableTilesGridMinHeight
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.EditModeTileDefaults.CurrentTilesGridPadding
-import com.android.systemui.qs.panels.ui.compose.infinitegrid.EditModeTileDefaults.GridBackgroundCornerRadius
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.EditModeTileDefaults.TilePlacementSpec
 import com.android.systemui.qs.panels.ui.compose.selection.InteractiveTileContainer
 import com.android.systemui.qs.panels.ui.compose.selection.MutableSelectionState
@@ -616,6 +615,8 @@ private fun CurrentTilesGrid(
     val coroutineScope = rememberCoroutineScope()
 
     val primaryColor = MaterialTheme.colorScheme.primary
+    val gridBackgroundCornerRadius =
+        dimensionResource(id = R.dimen.qs_shape_edit_grid_corner_radius)
     TileLazyGrid(
         state = gridState,
         columns = GridCells.Fixed(listState.columns),
@@ -626,7 +627,7 @@ private fun CurrentTilesGrid(
                 .border(
                     width = 2.dp,
                     color = primaryColor,
-                    shape = RoundedCornerShape(GridBackgroundCornerRadius),
+                    shape = RoundedCornerShape(gridBackgroundCornerRadius),
                 )
                 .dragAndDropTileList(gridState, { gridContentOffset }, listState) { spec ->
                     onEditAction(EditAction.SetTiles(currentListState.tileSpecs()))
@@ -638,7 +639,7 @@ private fun CurrentTilesGrid(
                 .drawBehind {
                     drawRoundRect(
                         primaryColor,
-                        cornerRadius = CornerRadius(GridBackgroundCornerRadius.toPx()),
+                        cornerRadius = CornerRadius(gridBackgroundCornerRadius.toPx()),
                         alpha = .15f,
                     )
                 }
@@ -764,6 +765,9 @@ private fun AvailableTileGrid(
     // Map of TileSpec to EditTileViewModel to use with the grouped tilespecs
     val viewModelsMap = remember(tiles) { tiles.associateBy { it.tileSpec } }
 
+    val gridBackgroundCornerRadius =
+        dimensionResource(id = R.dimen.qs_shape_edit_grid_corner_radius)
+
     // Available tiles
     Column(
         verticalArrangement = spacedBy(2.dp),
@@ -777,13 +781,13 @@ private fun AvailableTileGrid(
                     when (index) {
                         0 ->
                             RoundedCornerShape(
-                                topStart = GridBackgroundCornerRadius,
-                                topEnd = GridBackgroundCornerRadius,
+                                topStart = gridBackgroundCornerRadius,
+                                topEnd = gridBackgroundCornerRadius,
                             )
                         groupedTileSpecs.size - 1 ->
                             RoundedCornerShape(
-                                bottomStart = GridBackgroundCornerRadius,
-                                bottomEnd = GridBackgroundCornerRadius,
+                                bottomStart = gridBackgroundCornerRadius,
+                                bottomEnd = gridBackgroundCornerRadius,
                             )
                         else -> RectangleShape
                     }
@@ -1404,7 +1408,6 @@ private object EditModeTileDefaults {
     const val AUTO_SELECT_DEBOUNCE_MILLIS = 100L
     val CurrentTilesGridPadding = 10.dp
     val AvailableTilesGridMinHeight = 200.dp
-    val GridBackgroundCornerRadius = 28.dp
     val TilePlacementSpec =
         spring(
             stiffness = Spring.StiffnessMediumLow,

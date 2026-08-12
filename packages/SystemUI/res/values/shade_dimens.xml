@@ -25,14 +25,19 @@
     -->
     <dimen name="shade_panel_margin_horizontal">0dp</dimen>
 
-    <dimen name="overlay_shade_panel_shape_radius">46dp</dimen>
+    <dimen name="qs_shape_panel_corner_radius">28dp</dimen>
+    <dimen name="overlay_shade_panel_shape_radius">@dimen/qs_shape_panel_corner_radius</dimen>
 
     <!-- QS shade overlay common tiles -->
     <!-- Component-semantic shape tokens keep tile styling separate from state behavior. -->
+    <dimen name="qs_shape_brightness_container_corner_radius">16dp</dimen>
+    <dimen name="qs_shape_edit_grid_corner_radius">20dp</dimen>
     <dimen name="qs_shape_icon_active_corner_radius">12dp</dimen>
     <dimen name="qs_shape_icon_inactive_corner_radius">16dp</dimen>
     <dimen name="qs_shape_tile_active_corner_radius">16dp</dimen>
     <dimen name="qs_shape_tile_inactive_corner_radius">20dp</dimen>
+    <dimen name="qs_shape_toolbar_button_background_corner_radius">10dp</dimen>
+    <dimen name="qs_shape_toolbar_feedback_corner_radius">10dp</dimen>
     <dimen name="qs_size_tile_icon_only_icon">28dp</dimen>
     <dimen name="qs_size_tile_labeled_icon">24dp</dimen>
     <dimen name="qs_spacing_tile_content">8dp</dimen>
@@ -59,7 +64,7 @@
     <dimen name="overlay_qs_layout_brightness_thumb_width">4dp</dimen>
     <dimen name="overlay_qs_layout_brightness_track_height">40dp</dimen>
     <dimen name="overlay_qs_layout_brightness_vertical_padding">6dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_rounded_corner">24dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_rounded_corner">@dimen/qs_shape_brightness_container_corner_radius</dimen>
     <dimen name="overlay_qs_layout_brightness_frame_width">10dp</dimen>
     <dimen name="overlay_qs_layout_brightness_frame_height">6dp</dimen>
     <dimen name="overlay_qs_layout_toolbar_height">48dp</dimen>
