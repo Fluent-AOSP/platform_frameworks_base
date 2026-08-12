@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.android.compose.theme.LocalAndroidColorScheme
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.EditModeTabs.EditModeTabsColors
 import com.android.systemui.qs.panels.ui.viewmodel.EditModeTabsViewModel
 
@@ -48,8 +47,8 @@ public object EditModeTabsDefaults {
     @Composable
     public fun colors(): EditModeTabsColors {
         return EditModeTabsColors(
-            containerColor = LocalAndroidColorScheme.current.surfaceEffect1,
-            selectedTabColor = LocalAndroidColorScheme.current.surfaceEffect2,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            selectedTabColor = MaterialTheme.colorScheme.surfaceContainerLow,
             contentColor = MaterialTheme.colorScheme.primary,
             selectedContentColor = MaterialTheme.colorScheme.primary,
         )

@@ -84,8 +84,6 @@ import com.android.compose.animation.Expandable
 import com.android.compose.animation.scene.ContentScope
 import com.android.compose.lifecycle.LaunchedEffectWithLifecycle
 import com.android.compose.modifiers.animatedBackground
-import com.android.compose.theme.LocalAndroidColorScheme
-import com.android.compose.theme.colorAttr
 import com.android.systemui.Flags.notificationShadeBlur
 import com.android.systemui.animation.Expandable
 import com.android.systemui.common.shared.model.Icon
@@ -184,7 +182,7 @@ fun FooterActions(viewModel: FooterActionsViewModel, modifier: Modifier = Modifi
     }
 
     val backgroundColor =
-        if (!notificationShadeBlur()) colorAttr(R.attr.underSurface) else Color.Transparent
+        if (!notificationShadeBlur()) MaterialTheme.colorScheme.surface else Color.Transparent
     val backgroundAlphaValue = if (!notificationShadeBlur()) backgroundAlpha::value else ({ 0f })
     val contentColor = MaterialTheme.colorScheme.onSurface
     val backgroundTopRadius = dimensionResource(R.dimen.qs_shape_panel_corner_radius)
@@ -631,40 +629,25 @@ private fun Modifier.animatedScaledHeight(scale: () -> Float): Modifier {
 @Composable
 @ReadOnlyComposable
 private fun textButtonColors(): TextButtonColors {
-    return if (notificationShadeBlur()) {
-        FooterActionsDefaults.blurTextButtonColors()
-    } else {
-        FooterActionsDefaults.textButtonColors()
-    }
+    return FooterActionsDefaults.textButtonColors()
 }
 
 @Composable
 @ReadOnlyComposable
 private fun numberButtonColors(): TextButtonColors {
-    return if (notificationShadeBlur()) {
-        FooterActionsDefaults.blurTextButtonColors()
-    } else {
-        FooterActionsDefaults.numberButtonColors()
-    }
+    return FooterActionsDefaults.numberButtonColors()
 }
 
 @Composable
 @ReadOnlyComposable
 private fun buttonColorsForModel(footerAction: FooterActionsButtonViewModel): ButtonColors {
-    return if (notificationShadeBlur()) {
-        when (footerAction) {
-            is FooterActionsButtonViewModel.PowerActionViewModel ->
-                FooterActionsDefaults.activeButtonColors()
-            is FooterActionsButtonViewModel.SettingsActionViewModel ->
-                FooterActionsDefaults.inactiveButtonColors()
-            is FooterActionsButtonViewModel.UserSwitcherViewModel ->
-                FooterActionsDefaults.userSwitcherButtonColors()
-        }
-    } else {
-        ButtonColors(
-            icon = footerAction.iconTintFallback?.let { Color(it) } ?: Color.Unspecified,
-            background = colorAttr(footerAction.backgroundColorFallback),
-        )
+    return when (footerAction) {
+        is FooterActionsButtonViewModel.PowerActionViewModel ->
+            FooterActionsDefaults.activeButtonColors()
+        is FooterActionsButtonViewModel.SettingsActionViewModel ->
+            FooterActionsDefaults.inactiveButtonColors()
+        is FooterActionsButtonViewModel.UserSwitcherViewModel ->
+            FooterActionsDefaults.userSwitcherButtonColors()
     }
 }
 
@@ -698,8 +681,8 @@ private object FooterActionsDefaults {
     fun inactiveButtonColors(): ButtonColors =
         ButtonColors(
             icon = MaterialTheme.colorScheme.onSurface,
-            background = LocalAndroidColorScheme.current.surfaceEffect1,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f)),
+            background = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         )
 
     @Composable
@@ -707,8 +690,8 @@ private object FooterActionsDefaults {
     fun userSwitcherButtonColors(): ButtonColors =
         ButtonColors(
             icon = Color.Unspecified,
-            background = LocalAndroidColorScheme.current.surfaceEffect1,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f)),
+            background = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         )
 
     @Composable
@@ -716,25 +699,20 @@ private object FooterActionsDefaults {
     fun blurTextButtonColors(): TextButtonColors =
         TextButtonColors(
             content = MaterialTheme.colorScheme.onSurface,
-            background = LocalAndroidColorScheme.current.surfaceEffect1,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f)),
+            background = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         )
 
     @Composable
     @ReadOnlyComposable
-    fun textButtonColors(): TextButtonColors =
-        TextButtonColors(
-            content = colorAttr(R.attr.onShadeInactiveVariant),
-            background = colorAttr(R.attr.underSurface),
-            border = BorderStroke(1.dp, colorAttr(R.attr.shadeInactive)),
-        )
+    fun textButtonColors(): TextButtonColors = blurTextButtonColors()
 
     @Composable
     @ReadOnlyComposable
     fun numberButtonColors(): TextButtonColors =
         TextButtonColors(
-            content = colorAttr(R.attr.onShadeInactiveVariant),
-            background = colorAttr(R.attr.shadeInactive),
-            border = null,
+            content = MaterialTheme.colorScheme.onSurface,
+            background = MaterialTheme.colorScheme.surfaceContainer,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         )
 }

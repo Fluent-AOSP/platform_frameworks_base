@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.android.compose.theme.LocalAndroidColorScheme
 import com.android.systemui.common.ui.compose.Icon
 import com.android.systemui.compose.modifiers.sysuiResTag
 import com.android.systemui.qs.panels.ui.compose.toolbar.TextFeedback.tag
@@ -48,7 +47,7 @@ fun TextFeedback(viewModel: TextFeedbackViewModel, modifier: Modifier = Modifier
                 modifier
                     .tag()
                     .background(
-                        color = LocalAndroidColorScheme.current.surfaceEffect2,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape =
                             RoundedCornerShape(
                                 dimensionResource(R.dimen.qs_shape_toolbar_feedback_corner_radius)

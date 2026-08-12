@@ -83,6 +83,7 @@ import com.android.compose.modifiers.thenIf
 import com.android.systemui.brightness.ui.compose.BrightnessSliderContainer
 import com.android.systemui.brightness.ui.compose.BrightnessSliderDimensions
 import com.android.systemui.brightness.ui.compose.ContainerColors
+import com.android.systemui.common.shared.colors.SystemUISliderColors
 import com.android.systemui.compose.modifiers.sysuiResTag
 import com.android.systemui.dagger.SysUISingleton
 import com.android.systemui.development.ui.compose.BuildNumber
@@ -192,52 +193,55 @@ constructor(
 
         LaunchedEffectWithLifecycle(key1 = Unit) { contentViewModel.detectShadeModeChanges() }
 
-        Box(
-            modifier =
-                modifier
-                    .graphicsLayer { alpha = contentAlphaFromBrightnessMirror }
-                    .blur(with(LocalDensity.current) { animatedBlurRadiusPx.toDp() })
-                    .thenIf(showBrightnessMirror) { Modifier.gesturesDisabled() }
-        ) {
-            OverlayShade(
-                panelElement = QuickSettingsShade.Elements.Panel,
-                alignmentOnWideScreens = Alignment.End,
-                statusBarHeightPx = contentViewModel.statusBarHeightPx,
-                enableTransparency = contentViewModel.isTransparencyEnabled,
-                onScrimClicked = contentViewModel::onScrimClicked,
-                onBackgroundPlaced = { bounds, topCornerRadius, bottomCornerRadius ->
-                    contentViewModel.onShadeOverlayBoundsChanged(bounds)
-                    contentViewModel.onPanelShapeInWindowChanged(
-                        ShadeScrimShape(
-                            bounds = ShadeScrimBounds(bounds),
-                            topRadius = topCornerRadius.roundToInt(),
-                            bottomRadius = bottomCornerRadius.roundToInt(),
-                        )
-                    )
-                },
-                header = {
-                    if (contentViewModel.showHeader) {
-                        val headerViewModel = quickSettingsContainerViewModel.shadeHeaderViewModel
-                        OverlayShadeHeader(
-                            viewModel = headerViewModel,
-                            notificationsHighlight = headerViewModel.inactiveChipHighlight,
-                            quickSettingsHighlight = ChipHighlightModel.Strong,
-                            showClock = true,
-                            modifier = Modifier.element(QuickSettingsShade.Elements.StatusBar),
-                        )
-                    }
-                },
+        QuickSettingsTheme {
+            Box(
+                modifier =
+                    modifier
+                        .graphicsLayer { alpha = contentAlphaFromBrightnessMirror }
+                        .blur(with(LocalDensity.current) { animatedBlurRadiusPx.toDp() })
+                        .thenIf(showBrightnessMirror) { Modifier.gesturesDisabled() }
             ) {
-                QuickSettingsContainer(
-                    contentViewModel = contentViewModel,
-                    containerViewModel = quickSettingsContainerViewModel,
+                OverlayShade(
+                    panelElement = QuickSettingsShade.Elements.Panel,
+                    alignmentOnWideScreens = Alignment.End,
+                    statusBarHeightPx = contentViewModel.statusBarHeightPx,
+                    enableTransparency = contentViewModel.isTransparencyEnabled,
+                    onScrimClicked = contentViewModel::onScrimClicked,
+                    onBackgroundPlaced = { bounds, topCornerRadius, bottomCornerRadius ->
+                        contentViewModel.onShadeOverlayBoundsChanged(bounds)
+                        contentViewModel.onPanelShapeInWindowChanged(
+                            ShadeScrimShape(
+                                bounds = ShadeScrimBounds(bounds),
+                                topRadius = topCornerRadius.roundToInt(),
+                                bottomRadius = bottomCornerRadius.roundToInt(),
+                            )
+                        )
+                    },
+                    header = {
+                        if (contentViewModel.showHeader) {
+                            val headerViewModel =
+                                quickSettingsContainerViewModel.shadeHeaderViewModel
+                            OverlayShadeHeader(
+                                viewModel = headerViewModel,
+                                notificationsHighlight = headerViewModel.inactiveChipHighlight,
+                                quickSettingsHighlight = ChipHighlightModel.Strong,
+                                showClock = true,
+                                modifier = Modifier.element(QuickSettingsShade.Elements.StatusBar),
+                            )
+                        }
+                    },
+                ) {
+                    QuickSettingsContainer(
+                        contentViewModel = contentViewModel,
+                        containerViewModel = quickSettingsContainerViewModel,
+                    )
+                }
+                SnoozableHeadsUpNotificationPlaceholder(
+                    tag = "QSShadeOverlay",
+                    stackScrollView = notificationStackScrollView.get(),
+                    viewModel = hunPlaceholderViewModel,
                 )
             }
-            SnoozableHeadsUpNotificationPlaceholder(
-                tag = "QSShadeOverlay",
-                stackScrollView = notificationStackScrollView.get(),
-                viewModel = hunPlaceholderViewModel,
-            )
         }
     }
 }
@@ -416,6 +420,10 @@ private fun ContentScope.QuickSettingsLayout(
                             ),
                         modifier = Modifier.fillMaxWidth(),
                         dimensions = QuickSettingsShade.Dimensions.brightnessSliderDimensions,
+                        sliderColors =
+                            SystemUISliderColors.Defaults.copy(
+                                inactiveTrackColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
                     )
                 }
             }

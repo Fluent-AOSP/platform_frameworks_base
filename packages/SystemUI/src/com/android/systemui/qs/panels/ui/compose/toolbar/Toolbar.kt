@@ -63,7 +63,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import com.android.compose.animation.Expandable
-import com.android.compose.theme.LocalAndroidColorScheme
 import com.android.systemui.common.shared.model.Icon
 import com.android.systemui.common.ui.compose.Icon
 import com.android.systemui.common.ui.compose.load
@@ -213,7 +212,7 @@ private fun IconButton(
     ) {
         val protectionColor =
             if (useIconColorProtection) {
-                LocalAndroidColorScheme.current.surfaceEffect1
+                MaterialTheme.colorScheme.surfaceContainer
             } else {
                 Color.Transparent
             }

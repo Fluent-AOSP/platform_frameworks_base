@@ -16,13 +16,17 @@
 
 package com.android.systemui.qs.panels.ui.compose
 
+import android.graphics.Color
 import android.util.TypedValue
+import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.systemui.SysuiTestCase
 import com.android.systemui.res.R
 import com.google.common.truth.Truth.assertThat
+import kotlin.math.max
+import kotlin.math.min
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -135,6 +139,48 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     }
 
     @Test
+    fun fluentColors_useFixedAccessibleWindowsRoles() {
+        assertThat(color(R.color.fluent_qs_accent_light)).isEqualTo(Color.rgb(0, 95, 184))
+        assertThat(color(R.color.fluent_qs_on_accent_light)).isEqualTo(Color.WHITE)
+        assertThat(color(R.color.fluent_qs_accent_dark)).isEqualTo(Color.rgb(96, 205, 255))
+        assertThat(color(R.color.fluent_qs_on_accent_dark)).isEqualTo(Color.BLACK)
+        assertThat(Color.alpha(color(R.color.fluent_qs_control_fill_light))).isLessThan(255)
+        assertThat(Color.alpha(color(R.color.fluent_qs_control_fill_dark))).isLessThan(255)
+        assertThat(Color.alpha(color(R.color.fluent_qs_surface_opaque_light))).isEqualTo(255)
+        assertThat(Color.alpha(color(R.color.fluent_qs_surface_opaque_dark))).isEqualTo(255)
+        assertThat(Color.alpha(color(R.color.fluent_qs_control_fill_opaque_light))).isEqualTo(255)
+        assertThat(Color.alpha(color(R.color.fluent_qs_control_fill_opaque_dark))).isEqualTo(255)
+        assertThat(
+                contrastRatio(
+                    color(R.color.fluent_qs_on_accent_light),
+                    color(R.color.fluent_qs_accent_light),
+                )
+            )
+            .isAtLeast(4.5)
+        assertThat(
+                contrastRatio(
+                    color(R.color.fluent_qs_on_accent_dark),
+                    color(R.color.fluent_qs_accent_dark),
+                )
+            )
+            .isAtLeast(4.5)
+        assertThat(
+                contrastRatio(
+                    color(R.color.fluent_qs_on_tooltip_light),
+                    color(R.color.fluent_qs_tooltip_light),
+                )
+            )
+            .isAtLeast(4.5)
+        assertThat(
+                contrastRatio(
+                    color(R.color.fluent_qs_on_tooltip_dark),
+                    color(R.color.fluent_qs_tooltip_dark),
+                )
+            )
+            .isAtLeast(4.5)
+    }
+
+    @Test
     fun compactTiles_preserveMinimumTouchTargets() {
         assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
         val minimumTouchTarget = 48 * context.resources.displayMetrics.density
@@ -153,6 +199,26 @@ class QuickSettingsTokenTest : SysuiTestCase() {
         assertThat(unresolvedValue.type).isEqualTo(TypedValue.TYPE_REFERENCE)
         assertThat(unresolvedValue.data).isEqualTo(token)
         assertThat(dimension(consumer)).isEqualTo(dimension(token))
+    }
+
+    private fun color(@ColorRes resource: Int): Int = context.getColor(resource)
+
+    private fun contrastRatio(foreground: Int, background: Int): Double {
+        val foregroundLuminance = relativeLuminance(foreground)
+        val backgroundLuminance = relativeLuminance(background)
+        return (max(foregroundLuminance, backgroundLuminance) + .05) /
+            (min(foregroundLuminance, backgroundLuminance) + .05)
+    }
+
+    private fun relativeLuminance(color: Int): Double {
+        fun linear(component: Int): Double {
+            val channel = component / 255.0
+            return if (channel <= .04045) channel / 12.92
+            else Math.pow((channel + .055) / 1.055, 2.4)
+        }
+        return .2126 * linear(Color.red(color)) +
+            .7152 * linear(Color.green(color)) +
+            .0722 * linear(Color.blue(color))
     }
 
     private fun dimension(@DimenRes resource: Int): Float = context.resources.getDimension(resource)

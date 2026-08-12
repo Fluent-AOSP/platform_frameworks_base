@@ -76,7 +76,6 @@ import com.android.compose.animation.bounceable
 import com.android.compose.animation.rememberExpandableController
 import com.android.compose.animation.scene.ContentScope
 import com.android.compose.modifiers.thenIf
-import com.android.compose.theme.LocalAndroidColorScheme
 import com.android.mechanics.compose.modifier.verticalFadeContentReveal
 import com.android.mechanics.compose.modifier.verticalTactileSurfaceReveal
 import com.android.mechanics.effects.VerticalTactileSurfaceRevealEffect
@@ -558,30 +557,27 @@ private object TileDefaults {
 
     @Composable
     @ReadOnlyComposable
-    fun inactiveTileColors(): TileColors {
-        val surface = LocalAndroidColorScheme.current.surfaceEffect1
-        return TileColors(
-            background = surface,
+    fun inactiveTileColors(): TileColors =
+        TileColors(
+            background = MaterialTheme.colorScheme.surfaceContainer,
             iconBackground = Color.Transparent,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onSurface,
-            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f),
+            border = MaterialTheme.colorScheme.outlineVariant,
         )
-    }
 
     @Composable
     @ReadOnlyComposable
     fun unavailableTileColors(): TileColors {
-        val surfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = .18f)
         val onSurfaceVariantColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = .38f)
         return TileColors(
-            background = surfaceColor,
+            background = MaterialTheme.colorScheme.surfaceContainerLowest,
             iconBackground = Color.Transparent,
             label = onSurfaceVariantColor,
             secondaryLabel = onSurfaceVariantColor,
             icon = onSurfaceVariantColor,
-            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .2f),
+            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .5f),
         )
     }
 

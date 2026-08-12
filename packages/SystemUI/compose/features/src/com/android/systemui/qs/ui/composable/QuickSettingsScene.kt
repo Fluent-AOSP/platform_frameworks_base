@@ -169,19 +169,21 @@ constructor(
 
         LaunchedEffectWithLifecycle(key1 = Unit) { viewModel.detectShadeModeChanges() }
 
-        QuickSettingsScene(
-            notificationStackScrollView = notificationStackScrollView.get(),
-            viewModel = viewModel,
-            headerViewModel = viewModel.qsContainerViewModel.shadeHeaderViewModel,
-            notificationsPlaceholderViewModel = notificationsPlaceholderViewModel,
-            notificationRulesParentViewModel = notificationRulesParentViewModel,
-            modifier =
-                modifier
-                    .graphicsLayer { alpha = contentAlpha }
-                    .thenIf(brightnessMirrorShowing) { Modifier.gesturesDisabled() },
-            shadeSession = shadeSession,
-            jankMonitor = jankMonitor,
-        )
+        QuickSettingsTheme {
+            QuickSettingsScene(
+                notificationStackScrollView = notificationStackScrollView.get(),
+                viewModel = viewModel,
+                headerViewModel = viewModel.qsContainerViewModel.shadeHeaderViewModel,
+                notificationsPlaceholderViewModel = notificationsPlaceholderViewModel,
+                notificationRulesParentViewModel = notificationRulesParentViewModel,
+                modifier =
+                    modifier
+                        .graphicsLayer { alpha = contentAlpha }
+                        .thenIf(brightnessMirrorShowing) { Modifier.gesturesDisabled() },
+                shadeSession = shadeSession,
+                jankMonitor = jankMonitor,
+            )
+        }
     }
 
     companion object {

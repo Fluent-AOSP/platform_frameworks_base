@@ -160,7 +160,6 @@ import androidx.compose.ui.zIndex
 import com.android.compose.gesture.effect.rememberOffsetOverscrollEffectFactory
 import com.android.compose.modifiers.height
 import com.android.compose.modifiers.thenIf
-import com.android.compose.theme.LocalAndroidColorScheme
 import com.android.compose.ui.graphics.painter.rememberDrawablePainter
 import com.android.systemui.common.shared.model.Icon
 import com.android.systemui.common.ui.compose.load
@@ -273,7 +272,7 @@ fun DefaultEditTileGrid(
                     ),
                 colors =
                     IconButtonDefaults.iconButtonColors(
-                        containerColor = LocalAndroidColorScheme.current.surfaceEffect1,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                         contentColor = MaterialTheme.colorScheme.onSurface,
                     ),
             ) {
@@ -1433,17 +1432,15 @@ private object EditModeTileDefaults {
         )
 
     @Composable
-    fun editTileColors(): TileColors {
-        val surface = LocalAndroidColorScheme.current.surfaceEffect1
-        return TileColors(
-            background = surface,
-            iconBackground = surface,
+    fun editTileColors(): TileColors =
+        TileColors(
+            background = MaterialTheme.colorScheme.surfaceContainer,
+            iconBackground = Color.Transparent,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onSurface,
-            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f),
+            border = MaterialTheme.colorScheme.outlineVariant,
         )
-    }
 }
 
 private const val EDIT_MODE_ROOT_TEST_TAG = "EditModeRoot"

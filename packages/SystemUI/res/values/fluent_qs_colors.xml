@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2026 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+    <!-- Windows 11-inspired Quick Settings roles. Keep state consumers semantic. -->
+    <color name="fluent_qs_accent_light">#FF005FB8</color>
+    <color name="fluent_qs_on_accent_light">#FFFFFFFF</color>
+    <color name="fluent_qs_accent_dark">#FF60CDFF</color>
+    <color name="fluent_qs_on_accent_dark">#FF000000</color>
+
+    <!-- Translucent control layers reveal the platform-owned shade blur beneath them. -->
+    <color name="fluent_qs_control_fill_light">#B3FFFFFF</color>
+    <color name="fluent_qs_control_fill_secondary_light">#8FFFFFFF</color>
+    <color name="fluent_qs_control_fill_disabled_light">#59FFFFFF</color>
+    <color name="fluent_qs_control_stroke_light">#29000000</color>
+    <color name="fluent_qs_control_fill_dark">#14FFFFFF</color>
+    <color name="fluent_qs_control_fill_secondary_dark">#0FFFFFFF</color>
+    <color name="fluent_qs_control_fill_disabled_dark">#08FFFFFF</color>
+    <color name="fluent_qs_control_stroke_dark">#24FFFFFF</color>
+
+    <!-- Solid controls are used when the shade blur feature is unavailable. -->
+    <color name="fluent_qs_control_fill_opaque_light">#FFFFFFFF</color>
+    <color name="fluent_qs_control_fill_secondary_opaque_light">#FFF9F9F9</color>
+    <color name="fluent_qs_control_fill_disabled_opaque_light">#FFE8E8E8</color>
+    <color name="fluent_qs_control_fill_opaque_dark">#FF2D2D2D</color>
+    <color name="fluent_qs_control_fill_secondary_opaque_dark">#FF292929</color>
+    <color name="fluent_qs_control_fill_disabled_opaque_dark">#FF252525</color>
+
+    <!-- Solid roles are the no-blur/reduced-transparency fallback. -->
+    <color name="fluent_qs_surface_opaque_light">#FFF3F3F3</color>
+    <color name="fluent_qs_surface_opaque_dark">#FF202020</color>
+    <color name="fluent_qs_tooltip_light">#FF202020</color>
+    <color name="fluent_qs_on_tooltip_light">#FFFFFFFF</color>
+    <color name="fluent_qs_tooltip_dark">#FFF3F3F3</color>
+    <color name="fluent_qs_on_tooltip_dark">#FF1B1B1B</color>
+
+    <!-- Qualifier-aware aliases are available to non-Compose consumers. -->
+    <color name="fluent_qs_accent">@color/fluent_qs_accent_light</color>
+    <color name="fluent_qs_on_accent">@color/fluent_qs_on_accent_light</color>
+    <color name="fluent_qs_control_fill">@color/fluent_qs_control_fill_light</color>
+    <color name="fluent_qs_control_fill_secondary">@color/fluent_qs_control_fill_secondary_light</color>
+    <color name="fluent_qs_control_fill_disabled">@color/fluent_qs_control_fill_disabled_light</color>
+    <color name="fluent_qs_control_stroke">@color/fluent_qs_control_stroke_light</color>
+    <color name="fluent_qs_surface_opaque">@color/fluent_qs_surface_opaque_light</color>
+</resources>

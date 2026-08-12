@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +39,7 @@ import com.android.compose.gesture.gesturesDisabled
 import com.android.compose.modifiers.thenIf
 import com.android.systemui.brightness.ui.compose.BrightnessSliderContainer
 import com.android.systemui.brightness.ui.compose.ContainerColors
+import com.android.systemui.common.shared.colors.SystemUISliderColors
 import com.android.systemui.compose.modifiers.sysuiResTag
 import com.android.systemui.media.remedia.ui.compose.Media
 import com.android.systemui.media.remedia.ui.compose.MediaPresentationStyle
@@ -71,7 +73,7 @@ fun ContentScope.QuickSettingsContent(
                             containerColors =
                                 ContainerColors(
                                     Color.Transparent,
-                                    ContainerColors.defaultContainerColor,
+                                    MaterialTheme.colorScheme.surface,
                                 ),
                             modifier =
                                 Modifier.padding(
@@ -81,6 +83,10 @@ fun ContentScope.QuickSettingsContent(
                                     .thenIf(!isBrightnessSliderInteractable) {
                                         Modifier.gesturesDisabled()
                                     },
+                            sliderColors =
+                                SystemUISliderColors.Defaults.copy(
+                                    inactiveTrackColor = MaterialTheme.colorScheme.surfaceContainer
+                                ),
                         )
                     }
                 }
