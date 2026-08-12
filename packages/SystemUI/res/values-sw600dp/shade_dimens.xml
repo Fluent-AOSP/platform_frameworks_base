@@ -116,13 +116,16 @@
         android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="overlay_qs_layout_brightness_thumb_height"
-        android:featureFlag="com.android.systemui.desktop_sizing">40dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="overlay_qs_layout_brightness_thumb_width"
-        android:featureFlag="com.android.systemui.desktop_sizing">3dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="overlay_qs_layout_brightness_track_height"
         android:featureFlag="com.android.systemui.desktop_sizing">32dp</dimen>
+    <dimen
+        name="overlay_qs_layout_brightness_track_line_height"
+        android:featureFlag="com.android.systemui.desktop_sizing">4dp</dimen>
     <dimen
         name="overlay_qs_layout_brightness_vertical_padding"
         android:featureFlag="com.android.systemui.desktop_sizing">0dp</dimen>
@@ -151,4 +154,10 @@
     <dimen
         name="overlay_qs_layout_volume_extra_padding"
         android:featureFlag="com.android.systemui.desktop_sizing">0dp</dimen>
+    <dimen
+        name="overlay_qs_layout_volume_thumb_height"
+        android:featureFlag="com.android.systemui.desktop_sizing">40dp</dimen>
+    <dimen
+        name="overlay_qs_layout_volume_thumb_width"
+        android:featureFlag="com.android.systemui.desktop_sizing">3dp</dimen>
 </resources>

@@ -83,6 +83,15 @@ fun QuickSettingsTheme(content: @Composable () -> Unit) {
             if (useDarkPalette) R.color.fluent_qs_control_stroke_dark
             else R.color.fluent_qs_control_stroke_light
         )
+    val panelTint =
+        if (useTranslucentControls) {
+            colorResource(
+                if (useDarkPalette) R.color.fluent_qs_panel_tint_dark
+                else R.color.fluent_qs_panel_tint_light
+            )
+        } else {
+            surface
+        }
     val tooltip =
         colorResource(
             if (useDarkPalette) R.color.fluent_qs_tooltip_dark else R.color.fluent_qs_tooltip_light
@@ -106,6 +115,7 @@ fun QuickSettingsTheme(content: @Composable () -> Unit) {
             onTertiaryFixed = onTooltip,
             surface = surface,
             surfaceBright = surface,
+            surfaceDim = panelTint,
             surfaceContainer = controlFill,
             surfaceContainerHigh = controlFill,
             surfaceContainerLow = secondaryControlFill,

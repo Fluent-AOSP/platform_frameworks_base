@@ -30,7 +30,11 @@ import com.android.systemui.shade.ui.ShadeColors
 
 /** Scrim for QS/Shade, this will fill the max size, so it should be inside a Box like layout. */
 @Composable
-fun ContentScope.ShadePanelScrim(isTransparencyEnabled: Boolean, modifier: Modifier = Modifier) {
+fun ContentScope.ShadePanelScrim(
+    isTransparencyEnabled: Boolean,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color? = null,
+) {
     // This is the background for the whole scene, as the elements don't necessarily provide
     // a background that extends to the edges.
     Spacer(
@@ -38,7 +42,7 @@ fun ContentScope.ShadePanelScrim(isTransparencyEnabled: Boolean, modifier: Modif
             modifier
                 .element(Shade.Elements.BackgroundScrim)
                 .fillMaxSize()
-                .background(color = scrimColor(isTransparencyEnabled))
+                .background(color = backgroundColor ?: scrimColor(isTransparencyEnabled))
     )
 }
 

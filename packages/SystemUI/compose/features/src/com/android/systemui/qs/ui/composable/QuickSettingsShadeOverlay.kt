@@ -207,6 +207,12 @@ constructor(
                     statusBarHeightPx = contentViewModel.statusBarHeightPx,
                     enableTransparency = contentViewModel.isTransparencyEnabled,
                     onScrimClicked = contentViewModel::onScrimClicked,
+                    panelBackgroundColor =
+                        if (contentViewModel.isTransparencyEnabled) {
+                            MaterialTheme.colorScheme.surfaceDim
+                        } else {
+                            MaterialTheme.colorScheme.surface
+                        },
                     onBackgroundPlaced = { bounds, topCornerRadius, bottomCornerRadius ->
                         contentViewModel.onShadeOverlayBoundsChanged(bounds)
                         contentViewModel.onPanelShapeInWindowChanged(
@@ -539,6 +545,8 @@ object QuickSettingsShade {
                     brightnessRoundedCorner,
                     brightnessFrameWidth,
                     brightnessFrameHeight,
+                    trackLineHeight = brightnessTrackLineHeight,
+                    useFluentStyle = true,
                 )
 
         val HorizontalPadding: Dp
@@ -595,6 +603,11 @@ object QuickSettingsShade {
             @Composable
             @ReadOnlyComposable
             get() = dimensionResource(id = R.dimen.overlay_qs_layout_brightness_track_height)
+
+        private val brightnessTrackLineHeight: Dp
+            @Composable
+            @ReadOnlyComposable
+            get() = dimensionResource(id = R.dimen.overlay_qs_layout_brightness_track_line_height)
 
         private val brightnessVerticalPadding: Dp
             @Composable

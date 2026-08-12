@@ -27,15 +27,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.hasStateDescription
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.compose.theme.PlatformTheme
 import com.android.systemui.SysuiTestCase
 import com.android.systemui.brightness.ui.viewmodel.BrightnessSliderViewModel
 import com.android.systemui.common.shared.model.asIcon
+import com.android.systemui.compose.modifiers.resIdToTestTag
 import com.android.systemui.haptics.slider.sliderHapticsViewModelFactory
 import com.android.systemui.res.R
 import com.android.systemui.testKosmos
@@ -90,6 +95,42 @@ class BrightnessSliderTest : SysuiTestCase() {
         composeRule
             .onNodeWithText(context.getString(R.string.accessibility_brightness))
             .assert(hasStateDescription("12%"))
+    }
+
+    @Test
+    fun fluentDimensions_preserve48DpTouchTarget() {
+        composeRule.setContent {
+            PlatformTheme {
+                BrightnessSlider(
+                    gammaValue = 100,
+                    modifier = Modifier.wrapContentHeight().fillMaxWidth(),
+                    valueRange = 0..200,
+                    iconResProvider = BrightnessSliderViewModel::getIconForPercentage,
+                    imageLoader = { resId, context -> context.getDrawable(resId)!!.asIcon(null) },
+                    restriction = PolicyRestriction.NoRestriction,
+                    onRestrictedClick = {},
+                    onDrag = {},
+                    onStop = {},
+                    overriddenByAppState = false,
+                    hapticsViewModelFactory = kosmos.sliderHapticsViewModelFactory,
+                    dimensions =
+                        BrightnessSliderDimensions(
+                            iconSize = DpSize(20.dp, 20.dp),
+                            thumbHeight = 20.dp,
+                            thumbWidth = 20.dp,
+                            trackHeight = 32.dp,
+                            verticalPadding = 0.dp,
+                            backgroundRoundedCorner = 4.dp,
+                            backgroundFrameWidth = 8.dp,
+                            backgroundFrameHeight = 4.dp,
+                            trackLineHeight = 4.dp,
+                            useFluentStyle = true,
+                        ),
+                )
+            }
+        }
+
+        composeRule.onNodeWithTag(resIdToTestTag("slider")).assertHeightIsEqualTo(48.dp)
     }
 
     @Test

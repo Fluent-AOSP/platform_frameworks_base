@@ -60,10 +60,11 @@
 
     <!-- QS shade overlay brightness bar -->
     <dimen name="overlay_qs_layout_brightness_icon_size">20dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_thumb_height">48dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_thumb_width">4dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_thumb_height">20dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_thumb_width">20dp</dimen>
     <dimen name="overlay_qs_layout_brightness_track_height">32dp</dimen>
-    <dimen name="overlay_qs_layout_brightness_vertical_padding">4dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_track_line_height">4dp</dimen>
+    <dimen name="overlay_qs_layout_brightness_vertical_padding">0dp</dimen>
     <dimen name="overlay_qs_layout_brightness_rounded_corner">@dimen/qs_shape_brightness_container_corner_radius</dimen>
     <dimen name="overlay_qs_layout_brightness_frame_width">8dp</dimen>
     <dimen name="overlay_qs_layout_brightness_frame_height">4dp</dimen>
@@ -77,12 +78,8 @@
     <!-- QS shade overlay volume bar -->
     <dimen name="overlay_qs_layout_volume_extra_padding">12dp</dimen>
     <dimen name="overlay_qs_layout_volume_vertical_padding">4dp</dimen>
-    <dimen name="overlay_qs_layout_volume_thumb_height">
-        @dimen/overlay_qs_layout_brightness_thumb_height
-    </dimen>
-    <dimen name="overlay_qs_layout_volume_thumb_width">
-        @dimen/overlay_qs_layout_brightness_thumb_width
-    </dimen>
+    <dimen name="overlay_qs_layout_volume_thumb_height">48dp</dimen>
+    <dimen name="overlay_qs_layout_volume_thumb_width">4dp</dimen>
     <dimen name="overlay_qs_layout_volume_track_height">
         @dimen/overlay_qs_layout_brightness_track_height
     </dimen>

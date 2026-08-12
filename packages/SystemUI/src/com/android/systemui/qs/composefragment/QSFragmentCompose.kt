@@ -34,6 +34,7 @@ import android.widget.FrameLayout
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -279,6 +280,7 @@ constructor(
                     Box(
                         modifier =
                             modifier
+                                .background(MaterialTheme.colorScheme.surfaceDim)
                                 .layout { measurable, constraints ->
                                     measurable.measure(constraints).run {
                                         layout(width, height) {
@@ -864,6 +866,9 @@ constructor(
                                                     MaterialTheme.colorScheme.surface,
                                                 ),
                                             modifier = Modifier.fillMaxWidth(),
+                                            dimensions =
+                                                QuickSettingsShade.Dimensions
+                                                    .brightnessSliderDimensions,
                                             sliderColors =
                                                 SystemUISliderColors.Defaults.copy(
                                                     inactiveTrackColor =

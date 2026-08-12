@@ -117,15 +117,17 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
             composeTestRule.waitForIdle()
 
             composeTestRule.apply {
-                // Verify the brightness slider's height.
+                // Compose preserves a 48dp target around the 32dp Fluent visual track.
                 onNodeWithTag(resIdToTestTag("slider")).assertHeightIsEqualTo(48.dp)
+                onNodeWithTag(resIdToTestTag("brightness_slider"))
+                    .onParent()
+                    .assertHeightIsEqualTo(48.dp)
 
                 // Verify the brightness slider's vertical padding.
                 val brightnessSliderNode = onNodeWithTag(resIdToTestTag("brightness_slider"))
                 val sliderBoundsInRoot = brightnessSliderNode.getBoundsInRoot()
                 val sliderContainerBoundsInRoot = brightnessSliderNode.onParent().getBoundsInRoot()
-                val expectValue = if (DesktopSizing.isEnabled) 0.dp else 4.dp
-                assertEquals(expectValue, sliderBoundsInRoot.top - sliderContainerBoundsInRoot.top)
+                assertEquals(0.dp, sliderBoundsInRoot.top - sliderContainerBoundsInRoot.top)
             }
         }
 

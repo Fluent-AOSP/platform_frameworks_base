@@ -71,6 +71,7 @@ fun ContentScope.OverlayShade(
     enableTransparency: Boolean,
     onScrimClicked: () -> Unit,
     modifier: Modifier = Modifier,
+    panelBackgroundColor: Color? = null,
     onBackgroundPlaced: (bounds: Rect, topCornerRadius: Float, bottomCornerRadius: Float) -> Unit =
         { _, _, _ ->
         },
@@ -98,6 +99,7 @@ fun ContentScope.OverlayShade(
         ) {
             Panel(
                 enableTransparency = enableTransparency,
+                panelBackgroundColor = panelBackgroundColor,
                 spec = panelSpec,
                 modifier =
                     Modifier.overscroll(verticalOverscrollEffect)
@@ -165,6 +167,7 @@ fun ContentScope.OverlayShade(
 @Composable
 private fun ContentScope.Panel(
     enableTransparency: Boolean,
+    panelBackgroundColor: Color?,
     spec: VerticalExpandContainerSpec,
     modifier: Modifier = Modifier,
     header: (@Composable () -> Unit)?,
@@ -174,7 +177,10 @@ private fun ContentScope.Panel(
         modifier =
             modifier
                 .disableSwipesWhenScrolling()
-                .verticalExpandContainerBackground(Colors.panelBackground(enableTransparency), spec)
+                .verticalExpandContainerBackground(
+                    panelBackgroundColor ?: Colors.panelBackground(enableTransparency),
+                    spec,
+                )
     ) {
         Column {
             header?.invoke()

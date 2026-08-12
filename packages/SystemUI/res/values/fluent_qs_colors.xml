@@ -42,6 +42,8 @@
     <!-- Solid roles are the no-blur/reduced-transparency fallback. -->
     <color name="fluent_qs_surface_opaque_light">#FFF3F3F3</color>
     <color name="fluent_qs_surface_opaque_dark">#FF202020</color>
+    <color name="fluent_qs_panel_tint_light">#CCF3F3F3</color>
+    <color name="fluent_qs_panel_tint_dark">#CC202020</color>
     <color name="fluent_qs_tooltip_light">#FF202020</color>
     <color name="fluent_qs_on_tooltip_light">#FFFFFFFF</color>
     <color name="fluent_qs_tooltip_dark">#FFF3F3F3</color>

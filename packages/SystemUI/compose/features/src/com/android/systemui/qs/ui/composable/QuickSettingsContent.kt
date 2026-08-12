@@ -83,6 +83,7 @@ fun ContentScope.QuickSettingsContent(
                                     .thenIf(!isBrightnessSliderInteractable) {
                                         Modifier.gesturesDisabled()
                                     },
+                            dimensions = QuickSettingsShade.Dimensions.brightnessSliderDimensions,
                             sliderColors =
                                 SystemUISliderColors.Defaults.copy(
                                     inactiveTrackColor = MaterialTheme.colorScheme.surfaceContainer
