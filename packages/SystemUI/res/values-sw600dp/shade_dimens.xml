@@ -26,20 +26,35 @@
 
     <!-- QS shade overlay common tiles -->
     <dimen
-        name="common_tile_default_active_icon_corner_radius"
+        name="qs_shape_icon_active_corner_radius"
+        android:featureFlag="com.android.systemui.desktop_sizing">10dp</dimen>
+    <dimen
+        name="qs_shape_icon_inactive_corner_radius"
+        android:featureFlag="com.android.systemui.desktop_sizing">14dp</dimen>
+    <dimen
+        name="qs_shape_tile_active_corner_radius"
+        android:featureFlag="com.android.systemui.desktop_sizing">14dp</dimen>
+    <dimen
+        name="qs_shape_tile_inactive_corner_radius"
+        android:featureFlag="com.android.systemui.desktop_sizing">18dp</dimen>
+    <dimen
+        name="qs_tooltip_corner_radius"
         android:featureFlag="com.android.systemui.desktop_sizing">12dp</dimen>
     <dimen
+        name="common_tile_default_active_icon_corner_radius"
+        android:featureFlag="com.android.systemui.desktop_sizing">@dimen/qs_shape_icon_active_corner_radius</dimen>
+    <dimen
         name="common_tile_default_active_tile_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">18dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">@dimen/qs_shape_tile_active_corner_radius</dimen>
     <dimen
         name="common_tile_default_icon_size"
         android:featureFlag="com.android.systemui.desktop_sizing">20dp</dimen>
     <dimen
         name="common_tile_default_inactive_icon_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">22dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">@dimen/qs_shape_icon_inactive_corner_radius</dimen>
     <dimen
         name="common_tile_default_inactive_tile_corner_radius"
-        android:featureFlag="com.android.systemui.desktop_sizing">28dp</dimen>
+        android:featureFlag="com.android.systemui.desktop_sizing">@dimen/qs_shape_tile_inactive_corner_radius</dimen>
     <dimen
         name="common_tile_default_large_tile_icon_size"
         android:featureFlag="com.android.systemui.desktop_sizing">24dp</dimen>

@@ -77,7 +77,7 @@ fun Tooltip(
                 caretShape = TooltipDefaults.caretShape(),
                 shape =
                     RoundedCornerShape(
-                        dimensionResource(R.dimen.common_tile_default_active_icon_corner_radius)
+                        dimensionResource(R.dimen.qs_tooltip_corner_radius)
                     ),
                 containerColor = tertiaryColor,
                 contentColor = onTertiaryColor,
