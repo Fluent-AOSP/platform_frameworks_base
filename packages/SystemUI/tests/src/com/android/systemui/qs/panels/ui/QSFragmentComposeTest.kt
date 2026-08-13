@@ -95,6 +95,7 @@ class QSFragmentComposeTest : SysuiTestCase() {
             QuickSettingsLayout(
                 brightness = { Brightness() },
                 tiles = { Tiles(TILES_HEIGHT_PORTRAIT) },
+                volume = { Volume() },
                 media = { Media() },
                 mediaInRow = false,
             )
@@ -104,16 +105,20 @@ class QSFragmentComposeTest : SysuiTestCase() {
 
         val brightnessBounds = composeTestRule.onNodeWithTag(BRIGHTNESS).getBoundsInRoot()
         val tilesBounds = composeTestRule.onNodeWithTag(TILES).getBoundsInRoot()
+        val volumeBounds = composeTestRule.onNodeWithTag(VOLUME).getBoundsInRoot()
         val mediaBounds = composeTestRule.onNodeWithTag(MEDIA).getBoundsInRoot()
 
         assertThat(brightnessBounds.left).isEqualTo(tilesBounds.left)
-        assertThat(tilesBounds.left).isEqualTo(mediaBounds.left)
+        assertThat(tilesBounds.left).isEqualTo(volumeBounds.left)
+        assertThat(volumeBounds.left).isEqualTo(mediaBounds.left)
 
         assertThat(brightnessBounds.right).isEqualTo(tilesBounds.right)
-        assertThat(tilesBounds.right).isEqualTo(mediaBounds.right)
+        assertThat(tilesBounds.right).isEqualTo(volumeBounds.right)
+        assertThat(volumeBounds.right).isEqualTo(mediaBounds.right)
 
-        assertThat(brightnessBounds.bottom).isLessThan(tilesBounds.top)
-        assertThat(tilesBounds.bottom).isLessThan(mediaBounds.top)
+        assertThat(tilesBounds.bottom).isLessThan(brightnessBounds.top)
+        assertThat(brightnessBounds.bottom).isLessThan(volumeBounds.top)
+        assertThat(volumeBounds.bottom).isLessThan(mediaBounds.top)
     }
 
     @Test
@@ -122,6 +127,7 @@ class QSFragmentComposeTest : SysuiTestCase() {
             QuickSettingsLayout(
                 brightness = { Brightness() },
                 tiles = { Tiles(TILES_HEIGHT_PORTRAIT) },
+                volume = { Volume() },
                 media = { Media() },
                 mediaInRow = true,
             )
@@ -131,16 +137,20 @@ class QSFragmentComposeTest : SysuiTestCase() {
 
         val brightnessBounds = composeTestRule.onNodeWithTag(BRIGHTNESS).getBoundsInRoot()
         val tilesBounds = composeTestRule.onNodeWithTag(TILES).getBoundsInRoot()
+        val volumeBounds = composeTestRule.onNodeWithTag(VOLUME).getBoundsInRoot()
         val mediaBounds = composeTestRule.onNodeWithTag(MEDIA).getBoundsInRoot()
 
-        // Brightness takes full width, with left end aligned with tiles and right end aligned with
-        // media
+        // Both rails take full width, with left end aligned with tiles and right end aligned with
+        // media.
         assertThat(brightnessBounds.left).isEqualTo(tilesBounds.left)
         assertThat(brightnessBounds.right).isEqualTo(mediaBounds.right)
+        assertThat(volumeBounds.left).isEqualTo(tilesBounds.left)
+        assertThat(volumeBounds.right).isEqualTo(mediaBounds.right)
 
-        // Brightness above tiles and media
-        assertThat(brightnessBounds.bottom).isLessThan(tilesBounds.top)
-        assertThat(brightnessBounds.bottom).isLessThan(mediaBounds.top)
+        // Tiles and media stay paired, with the independent rails below the row.
+        assertThat(tilesBounds.bottom).isLessThan(brightnessBounds.top)
+        assertThat(mediaBounds.bottom).isLessThan(brightnessBounds.top)
+        assertThat(brightnessBounds.bottom).isLessThan(volumeBounds.top)
 
         // Media to the right of tiles
         assertThat(tilesBounds.right).isLessThan(mediaBounds.left)
@@ -153,15 +163,22 @@ class QSFragmentComposeTest : SysuiTestCase() {
     private companion object {
         const val BRIGHTNESS = "brightness"
         const val TILES = "tiles"
+        const val VOLUME = "volume"
         const val MEDIA = "media"
         val TILES_HEIGHT_PORTRAIT = 300.dp
         val TILES_HEIGHT_LANDSCAPE = 150.dp
         val MEDIA_HEIGHT = 100.dp
         val BRIGHTNESS_HEIGHT = 64.dp
+        val VOLUME_HEIGHT = 64.dp
 
         @Composable
         fun Brightness() {
             Box(modifier = Modifier.testTag(BRIGHTNESS).height(BRIGHTNESS_HEIGHT).fillMaxWidth())
+        }
+
+        @Composable
+        fun Volume() {
+            Box(modifier = Modifier.testTag(VOLUME).height(VOLUME_HEIGHT).fillMaxWidth())
         }
 
         @Composable

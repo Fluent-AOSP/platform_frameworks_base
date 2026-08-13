@@ -51,6 +51,7 @@ import com.android.systemui.testKosmos
 import com.android.systemui.util.mockito.any
 import com.android.systemui.util.mockito.mock
 import com.android.systemui.util.mockito.whenever
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.audioStreamSliderViewModelFactory
 import com.android.systemui.window.data.repository.fakeWindowRootViewBlurRepository
 import com.android.systemui.window.domain.interactor.windowRootViewBlurInteractor
 import com.google.common.truth.Truth.assertThat
@@ -85,6 +86,8 @@ class QuickSettingsSceneContentViewModelTest : SysuiTestCase() {
                 QuickSettingsSceneContentViewModel(
                     shadeHeaderViewModelFactory = shadeHeaderViewModelFactory,
                     qsContainerViewModelFactory = kosmos.quickSettingsContainerViewModelFactory,
+                    audioStreamSliderViewModelFactory = audioStreamSliderViewModelFactory,
+                    volumeSliderCoroutineScope = testScope.backgroundScope,
                     footerActionsViewModelFactory = footerActionsViewModelFactory,
                     footerActionsController = footerActionsController,
                     shadeModeInteractor = shadeModeInteractor,

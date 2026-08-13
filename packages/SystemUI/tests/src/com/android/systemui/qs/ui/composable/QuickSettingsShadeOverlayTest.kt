@@ -35,7 +35,6 @@ import androidx.test.filters.SmallTest
 import com.android.compose.animation.scene.TestContentScope
 import com.android.compose.theme.PlatformTheme
 import com.android.systemui.Flags.FLAG_DUAL_SHADE
-import com.android.systemui.Flags.FLAG_EXPANDED_AUDIO_DETAILED_VIEW
 import com.android.systemui.Flags.FLAG_QS_TILE_DETAILED_VIEW
 import com.android.systemui.SysuiTestCase
 import com.android.systemui.compose.modifiers.resIdToTestTag
@@ -49,6 +48,7 @@ import com.android.systemui.kosmos.runTest
 import com.android.systemui.kosmos.useUnconfinedTestDispatcher
 import com.android.systemui.qs.panels.data.repository.defaultLargeTilesRepository
 import com.android.systemui.qs.panels.domain.interactor.iconTilesInteractor
+import com.android.systemui.qs.panels.ui.compose.infinitegrid.TileTestTags
 import com.android.systemui.qs.panels.ui.viewmodel.detailsViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.editModeViewModel
 import com.android.systemui.qs.pipeline.domain.interactor.currentTilesInteractor
@@ -141,7 +141,11 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
             composeTestRule.setQSShadeOverlay()
             composeTestRule.waitForIdle()
 
-            composeTestRule.onNodeWithTag("element:airplane").assertHeightIsEqualTo(56.dp)
+            composeTestRule
+                .onNodeWithTag(
+                    resIdToTestTag(TileTestTags.fluentCompactSurface(TileSpec.create("airplane")))
+                )
+                .assertHeightIsEqualTo(56.dp)
 
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("qs_tile_icon"), useUnmergedTree = true)
@@ -164,7 +168,11 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
             composeTestRule.setQSShadeOverlay()
             composeTestRule.waitForIdle()
 
-            composeTestRule.onNodeWithTag("element:dnd").assertHeightIsEqualTo(56.dp)
+            composeTestRule
+                .onNodeWithTag(
+                    resIdToTestTag(TileTestTags.fluentCompactSurface(TileSpec.create("dnd")))
+                )
+                .assertHeightIsEqualTo(56.dp)
 
             composeTestRule
                 .onNodeWithTag(resIdToTestTag("qs_tile_icon"), useUnmergedTree = true)
@@ -193,14 +201,41 @@ class QuickSettingsShadeOverlayTest : SysuiTestCase() {
     @Test
     // TODO(b/485387343): Re-enable this test on desktop once the
     // SystemUITests_desktop is fixed.
-    @EnableFlags(FLAG_QS_TILE_DETAILED_VIEW, FLAG_EXPANDED_AUDIO_DETAILED_VIEW)
     fun testVolumeSlider() =
         kosmos.runTest {
             composeTestRule.setQSShadeOverlay()
             composeTestRule.waitForIdle()
 
-            // Verify the slider's height. "Media" is the tag of the volume slider.
-            composeTestRule.onNodeWithTag(resIdToTestTag("Media")).assertHeightIsEqualTo(48.dp)
+            // Verify the independent volume rail's height.
+            composeTestRule
+                .onNodeWithTag(resIdToTestTag("volume_slider"))
+                .assertHeightIsEqualTo(48.dp)
+        }
+
+    @Test
+    fun testTilesAreAboveBrightnessAndVolumeRails() =
+        kosmos.runTest {
+            val tileSpec = TileSpec.create("airplane")
+            currentTilesInteractor.setTiles(listOf(tileSpec))
+
+            composeTestRule.setQSShadeOverlay()
+            composeTestRule.waitForIdle()
+
+            val labelBottom =
+                composeTestRule
+                    .onNodeWithTag(resIdToTestTag(TileTestTags.fluentCompactLabel(tileSpec)))
+                    .getBoundsInRoot()
+                    .bottom
+            val brightnessBounds =
+                composeTestRule
+                    .onNodeWithTag(resIdToTestTag("brightness_slider"))
+                    .onParent()
+                    .getBoundsInRoot()
+            val volumeBounds =
+                composeTestRule.onNodeWithTag(resIdToTestTag("volume_slider")).getBoundsInRoot()
+
+            assertThat(labelBottom).isAtMost(brightnessBounds.top)
+            assertThat(brightnessBounds.bottom).isAtMost(volumeBounds.top)
         }
 
     @Test

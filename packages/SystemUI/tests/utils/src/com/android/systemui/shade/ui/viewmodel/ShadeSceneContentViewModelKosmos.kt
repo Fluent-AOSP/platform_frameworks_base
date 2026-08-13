@@ -33,6 +33,7 @@ import com.android.systemui.scene.domain.interactor.sceneInteractor
 import com.android.systemui.shade.domain.interactor.shadeModeInteractor
 import com.android.systemui.shade.domain.interactor.shadeStatusBarComponentsInteractor
 import com.android.systemui.unfold.domain.interactor.unfoldTransitionInteractor
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.audioStreamSliderViewModelFactory
 import com.android.systemui.window.domain.interactor.windowRootViewBlurInteractor
 
 val Kosmos.shadeSceneContentViewModel: ShadeSceneContentViewModel by Fixture {
@@ -40,6 +41,7 @@ val Kosmos.shadeSceneContentViewModel: ShadeSceneContentViewModel by Fixture {
         mainDispatcher = testDispatcher,
         shadeHeaderViewModelFactory = shadeHeaderViewModelFactory,
         qsContainerViewModelFactory = quickSettingsContainerViewModelFactory,
+        audioStreamSliderViewModelFactory = audioStreamSliderViewModelFactory,
         quickQuickSettingsViewModel = quickQuickSettingsViewModelFactory,
         mediaCarouselInteractor = mediaCarouselInteractor,
         shadeModeInteractor = shadeModeInteractor,

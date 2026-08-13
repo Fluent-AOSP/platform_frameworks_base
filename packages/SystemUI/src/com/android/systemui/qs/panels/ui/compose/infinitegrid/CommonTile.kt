@@ -129,11 +129,12 @@ fun LargeTileContent(
     textScale: () -> Float = { 1f },
     toggleClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
+    showLabels: Boolean = true,
 ) {
     val isDualTarget = toggleClick != null
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = tileHorizontalArrangement(),
+        horizontalArrangement = if (showLabels) tileHorizontalArrangement() else Arrangement.Center,
         modifier = modifier,
     ) {
         // Icon
@@ -177,15 +178,17 @@ fun LargeTileContent(
             )
         }
 
-        // Labels
-        LargeTileLabels(
-            label = label,
-            secondaryLabel = secondaryLabel,
-            colors = colors,
-            accessibilityUiState = accessibilityUiState,
-            isVisible = isVisible,
-            modifier = Modifier.weight(1f).bounceScale(TransformOrigin(0f, .5f), textScale),
-        )
+        // Labels are rendered outside the colored surface for Fluent compact presentation.
+        if (showLabels) {
+            LargeTileLabels(
+                label = label,
+                secondaryLabel = secondaryLabel,
+                colors = colors,
+                accessibilityUiState = accessibilityUiState,
+                isVisible = isVisible,
+                modifier = Modifier.weight(1f).bounceScale(TransformOrigin(0f, .5f), textScale),
+            )
+        }
 
         if (sideDrawable != null) {
             Image(

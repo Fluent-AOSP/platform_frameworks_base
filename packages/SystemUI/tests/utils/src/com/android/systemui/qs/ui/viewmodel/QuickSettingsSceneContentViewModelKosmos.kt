@@ -20,17 +20,24 @@ import com.android.systemui.keyguard.ui.transitions.blurConfig
 import com.android.systemui.kosmos.Kosmos
 import com.android.systemui.kosmos.Kosmos.Fixture
 import com.android.systemui.kosmos.testDispatcher
+import com.android.systemui.kosmos.testScope
 import com.android.systemui.qs.footerActionsController
 import com.android.systemui.qs.footerActionsViewModelFactory
 import com.android.systemui.scene.domain.interactor.sceneInteractor
 import com.android.systemui.shade.domain.interactor.shadeModeInteractor
 import com.android.systemui.shade.ui.viewmodel.shadeHeaderViewModelFactory
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.audioStreamSliderViewModelFactory
 import com.android.systemui.window.domain.interactor.windowRootViewBlurInteractor
+import kotlinx.coroutines.CoroutineScope
 
-val Kosmos.quickSettingsSceneContentViewModel by Fixture {
-    QuickSettingsSceneContentViewModel(
+private fun Kosmos.createQuickSettingsSceneContentViewModel(
+    volumeSliderCoroutineScope: CoroutineScope
+): QuickSettingsSceneContentViewModel {
+    return QuickSettingsSceneContentViewModel(
         shadeHeaderViewModelFactory = shadeHeaderViewModelFactory,
         qsContainerViewModelFactory = quickSettingsContainerViewModelFactory,
+        audioStreamSliderViewModelFactory = audioStreamSliderViewModelFactory,
+        volumeSliderCoroutineScope = volumeSliderCoroutineScope,
         footerActionsViewModelFactory = footerActionsViewModelFactory,
         footerActionsController = footerActionsController,
         shadeModeInteractor = shadeModeInteractor,
@@ -41,10 +48,17 @@ val Kosmos.quickSettingsSceneContentViewModel by Fixture {
     )
 }
 
+val Kosmos.quickSettingsSceneContentViewModel by Fixture {
+    createQuickSettingsSceneContentViewModel(testScope.backgroundScope)
+}
+
 val Kosmos.quickSettingsSceneContentViewModelFactory by Fixture {
+    val kosmos = this
     object : QuickSettingsSceneContentViewModel.Factory {
-        override fun create(): QuickSettingsSceneContentViewModel {
-            return quickSettingsSceneContentViewModel
+        override fun create(
+            volumeSliderCoroutineScope: CoroutineScope
+        ): QuickSettingsSceneContentViewModel {
+            return kosmos.createQuickSettingsSceneContentViewModel(volumeSliderCoroutineScope)
         }
     }
 }

@@ -16,6 +16,7 @@
 
 package com.android.systemui.shade.ui.composable
 
+import android.media.AudioManager
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
@@ -84,6 +85,7 @@ import com.android.compose.modifiers.height
 import com.android.compose.modifiers.padding
 import com.android.compose.modifiers.thenIf
 import com.android.internal.jank.InteractionJankMonitor
+import com.android.settingslib.volume.shared.model.AudioStream
 import com.android.systemui.common.ui.compose.windowinsets.CutoutLocation
 import com.android.systemui.common.ui.compose.windowinsets.LocalDisplayCutout
 import com.android.systemui.compose.modifiers.sysuiResTag
@@ -117,6 +119,8 @@ import com.android.systemui.shade.ui.viewmodel.ShadeSceneContentViewModel
 import com.android.systemui.shade.ui.viewmodel.ShadeUserActionsViewModel
 import com.android.systemui.statusbar.notification.stack.ui.view.NotificationScrollView
 import com.android.systemui.statusbar.notification.stack.ui.viewmodel.NotificationsPlaceholderViewModel
+import com.android.systemui.volume.panel.component.volume.domain.model.SliderType
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.AudioStreamSliderViewModel
 import dagger.Lazy
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -522,7 +526,6 @@ private fun ContentScope.SplitShade(
         rememberViewModel(traceName = "SplitShade.QSContainerViewModel") {
             viewModel.qsContainerViewModelFactory.create(supportsBrightnessMirroring = true)
         }
-
     val notificationStackPadding = dimensionResource(id = R.dimen.notification_side_paddings_split)
     val navBarBottomHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
@@ -593,6 +596,16 @@ private fun ContentScope.SplitShade(
                             )
 
                         val coroutineScope = rememberCoroutineScope()
+                        val volumeSliderViewModel =
+                            remember(viewModel, coroutineScope) {
+                                viewModel.audioStreamSliderViewModelFactory.create(
+                                    AudioStreamSliderViewModel.FactoryAudioStreamWrapper(
+                                        SliderType.Stream(AudioStream(AudioManager.STREAM_MUSIC))
+                                            .stream
+                                    ),
+                                    coroutineScope,
+                                )
+                            }
 
                         DisposableEffectWithLifecycle(
                             key1 = qsContainerViewModel,
@@ -645,6 +658,7 @@ private fun ContentScope.SplitShade(
                                         ) {
                                             QuickSettingsContent(
                                                 qsContainerViewModel,
+                                                volumeSliderViewModel,
                                                 mediaInRow = false,
                                                 mediaSquishiness = { tileSquishiness },
                                             )

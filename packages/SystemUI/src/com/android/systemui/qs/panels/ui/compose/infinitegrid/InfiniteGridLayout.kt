@@ -16,6 +16,7 @@
 
 package com.android.systemui.qs.panels.ui.compose.infinitegrid
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +45,7 @@ import com.android.systemui.qs.panels.ui.compose.bounceableInfo
 import com.android.systemui.qs.panels.ui.viewmodel.BounceableTileViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.DetailsViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.EditTileViewModel
+import com.android.systemui.qs.panels.ui.viewmodel.ExpandedTileGridPolicy
 import com.android.systemui.qs.panels.ui.viewmodel.IconTilesViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.InfiniteGridViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.TextFeedbackContentViewModel
@@ -84,42 +86,39 @@ constructor(
                 textFeedbackContentViewModelFactory.create(context)
             }
 
-        val columns = viewModel.columnsWithMediaViewModel.columns
-        val largeTilesSpan = viewModel.columnsWithMediaViewModel.largeSpan
-        val largeTiles by viewModel.iconTilesViewModel.largeTilesState
-        // Tiles or largeTiles may be updated while this is composed, so listen to any changes
+        val columns =
+            ExpandedTileGridPolicy.displayColumns(viewModel.columnsWithMediaViewModel.columns)
+        val largeTiles by iconTilesViewModel.largeTiles.collectAsStateWithLifecycle()
+        // Expanded Fluent tiles are visually uniform. Keep iconOnly solely as an interaction mode.
         val sizedTiles =
-            remember(tiles, largeTiles, largeTilesSpan) {
-                tiles.map {
-                    SizedTileImpl(it, if (largeTiles.contains(it.spec)) largeTilesSpan else 1)
-                }
-            }
-        val squishiness by viewModel.squishinessViewModel.squishiness.collectAsStateWithLifecycle()
-        val scope = rememberCoroutineScope()
-
+            remember(tiles) { tiles.map { SizedTileImpl(it, ExpandedTileGridPolicy.TileSpan) } }
         val bounceables =
             remember(sizedTiles) { List(sizedTiles.size) { BounceableTileViewModel() } }
         val spans by remember(sizedTiles) { derivedStateOf { sizedTiles.fastMap { it.width } } }
+        val squishiness by viewModel.squishinessViewModel.squishiness.collectAsStateWithLifecycle()
+        val scope = rememberCoroutineScope()
+
         VerticalSpannedGrid(
             columns = columns,
             columnSpacing = dimensionResource(R.dimen.qs_tile_margin_horizontal),
             rowSpacing = dimensionResource(R.dimen.qs_tile_margin_vertical),
             spans = spans,
             keys = { sizedTiles[it].tile.spec },
-            modifier = modifier,
+            modifier = modifier.fillMaxWidth(),
         ) { spanIndex, column, isFirstInColumn, isLastInColumn ->
-            val it = sizedTiles[spanIndex]
+            val sizedTile = sizedTiles[spanIndex]
 
-            Element(it.tile.spec.toElementKey(), Modifier) {
+            Element(sizedTile.tile.spec.toElementKey(), Modifier) {
                 Tile(
-                    tile = it.tile,
-                    iconOnly = iconTilesViewModel.isIconTile(it.tile.spec),
+                    tile = sizedTile.tile,
+                    iconOnly = sizedTile.tile.spec !in largeTiles,
+                    presentation = TilePresentation.FluentCompact,
                     squishiness = { squishiness },
                     tileHapticsViewModelFactory = tileHapticsViewModelFactory,
                     coroutineScope = scope,
                     bounceableInfo =
                         bounceables.bounceableInfo(
-                            it,
+                            sizedTile,
                             index = spanIndex,
                             column = column,
                             columns = columns,

@@ -41,6 +41,7 @@ import com.android.systemui.shade.domain.interactor.shadeStatusBarComponentsInte
 import com.android.systemui.shade.largeScreenHeaderHelper
 import com.android.systemui.shade.transition.largeScreenShadeInterpolator
 import com.android.systemui.statusbar.sysuiStatusBarStateController
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.audioStreamSliderViewModelFactory
 
 val Kosmos.qsFragmentComposeViewModelFactory by
     Kosmos.Fixture {
@@ -52,6 +53,7 @@ val Kosmos.qsFragmentComposeViewModelFactory by
                     quickSettingsContainerViewModelFactory,
                     mainResources,
                     quickQuickSettingsViewModelFactory,
+                    audioStreamSliderViewModelFactory,
                     footerActionsViewModelFactory,
                     footerActionsController,
                     sysuiStatusBarStateController,

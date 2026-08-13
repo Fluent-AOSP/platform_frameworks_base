@@ -16,10 +16,12 @@
 
 package com.android.systemui.qs.ui.viewmodel
 
+import android.media.AudioManager
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.LifecycleOwner
 import com.android.app.tracing.coroutines.launchTraced as launch
 import com.android.compose.animation.scene.content.state.TransitionState
+import com.android.settingslib.volume.shared.model.AudioStream
 import com.android.systemui.Flags
 import com.android.systemui.dagger.qualifiers.Main
 import com.android.systemui.keyguard.ui.transitions.BlurConfig
@@ -33,11 +35,15 @@ import com.android.systemui.scene.shared.model.Scenes
 import com.android.systemui.shade.domain.interactor.ShadeModeInteractor
 import com.android.systemui.shade.shared.model.ShadeMode
 import com.android.systemui.shade.ui.viewmodel.ShadeHeaderViewModel
+import com.android.systemui.volume.panel.component.volume.domain.model.SliderType
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.AudioStreamSliderViewModel
 import com.android.systemui.window.domain.interactor.WindowRootViewBlurInteractor
+import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
@@ -53,6 +59,8 @@ class QuickSettingsSceneContentViewModel
 constructor(
     val shadeHeaderViewModelFactory: ShadeHeaderViewModel.Factory,
     qsContainerViewModelFactory: QuickSettingsContainerViewModel.Factory,
+    audioStreamSliderViewModelFactory: AudioStreamSliderViewModel.Factory,
+    @Assisted volumeSliderCoroutineScope: CoroutineScope,
     private val footerActionsViewModelFactory: FooterActionsViewModel.Factory,
     private val footerActionsController: FooterActionsController,
     private val shadeModeInteractor: ShadeModeInteractor,
@@ -63,6 +71,13 @@ constructor(
 ) : HydratedActivatable() {
     val qsContainerViewModel =
         qsContainerViewModelFactory.create(supportsBrightnessMirroring = true)
+    val volumeSliderViewModel =
+        audioStreamSliderViewModelFactory.create(
+            AudioStreamSliderViewModel.FactoryAudioStreamWrapper(
+                SliderType.Stream(AudioStream(AudioManager.STREAM_MUSIC)).stream
+            ),
+            volumeSliderCoroutineScope,
+        )
 
     /**
      * Whether the shade container transparency effect should be enabled (`true`), or whether to
@@ -133,6 +148,6 @@ constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(): QuickSettingsSceneContentViewModel
+        fun create(volumeSliderCoroutineScope: CoroutineScope): QuickSettingsSceneContentViewModel
     }
 }

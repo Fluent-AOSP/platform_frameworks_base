@@ -113,8 +113,9 @@ class QuickSettingsSceneTest : SysuiTestCase() {
 
             composeTestRule.waitForIdle()
 
-            // Verify that the brightness slider exists.
+            // Verify that both independent sliders exist.
             composeTestRule.onNodeWithTag(resIdToTestTag("brightness_slider")).assertExists()
+            composeTestRule.onNodeWithTag(resIdToTestTag("volume_slider")).assertExists()
 
             // Verify that the tiles exist.
             composeTestRule.onNodeWithTag("element:$internetTileName").assertExists()

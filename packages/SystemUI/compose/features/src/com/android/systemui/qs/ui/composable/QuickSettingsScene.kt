@@ -136,8 +136,11 @@ constructor(
 
     @Composable
     override fun ContentScope.Content(modifier: Modifier) {
+        val volumeSliderCoroutineScope = rememberCoroutineScope()
         val viewModel =
-            rememberViewModel("QuickSettingsScene-viewModel") { contentViewModelFactory.create() }
+            rememberViewModel("QuickSettingsScene-viewModel", key = volumeSliderCoroutineScope) {
+                contentViewModelFactory.create(volumeSliderCoroutineScope)
+            }
         val notificationsPlaceholderViewModel =
             rememberViewModel("QuickSettingsScene-notifPlaceholderViewModel") {
                 notificationsPlaceholderViewModelFactory.create(Scenes.QuickSettings)
@@ -438,6 +441,7 @@ private fun ContentScope.QuickSettingsContent(
                     Spacer(modifier = Modifier.height(16.dp))
                     QuickSettingsContent(
                         viewModel.qsContainerViewModel,
+                        viewModel.volumeSliderViewModel,
                         mediaInRow,
                         Modifier.padding(horizontal = shadeHorizontalPadding),
                     )

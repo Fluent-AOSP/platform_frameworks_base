@@ -82,9 +82,16 @@ fun EditModeButton(
     CompositionLocalProvider(
         value = LocalContentColor provides MaterialTheme.colorScheme.onSurface
     ) {
-        val tooltipState = rememberTooltipState(isPersistent = true)
+        // Keep first-run edit education without leaving a persistent popup over the fixed Fluent
+        // brightness and volume rails.
+        val tooltipState = rememberTooltipState(isPersistent = false)
         val showTooltip = isVisible && viewModel.showTooltip
-        LaunchedEffect(showTooltip) { if (showTooltip) tooltipState.show() }
+        LaunchedEffect(showTooltip) {
+            if (showTooltip) {
+                tooltipState.show()
+                viewModel.onTooltipDisposed()
+            }
+        }
 
         // Make sure to dismiss the tooltip if it's still visible when it shouldn't be due to always
         // composing QS.

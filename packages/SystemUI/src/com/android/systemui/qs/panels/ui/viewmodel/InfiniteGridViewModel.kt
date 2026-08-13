@@ -22,7 +22,6 @@ import com.android.systemui.media.controls.ui.controller.MediaHierarchyManager.C
 import com.android.systemui.qs.panels.shared.model.SizedTileImpl
 import com.android.systemui.qs.panels.ui.dialog.QSResetDialogDelegate
 import com.android.systemui.qs.panels.ui.viewmodel.PaginatableViewModel.Companion.splitInRows
-import com.android.systemui.qs.pipeline.shared.TileSpec
 import com.android.systemui.qs.ui.viewmodel.QuickSettingsContainerViewModel
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -50,26 +49,15 @@ constructor(
         )
 
     override val pageKeys: Array<Any>
-        get() =
-            arrayOf(
-                columnsWithMediaViewModel.columns,
-                columnsWithMediaViewModel.largeSpan,
-                iconTilesViewModel.largeTilesState.value,
-            )
+        get() = arrayOf(ExpandedTileGridPolicy.displayColumns(columnsWithMediaViewModel.columns))
 
     override fun splitIntoPages(tiles: List<TileViewModel>, rows: Int): List<List<TileViewModel>> {
         return splitInRows(
-                tiles.map { SizedTileImpl(it, widthOf(it.spec)) },
-                columnsWithMediaViewModel.columns,
+                tiles.map { SizedTileImpl(it, ExpandedTileGridPolicy.TileSpan) },
+                ExpandedTileGridPolicy.displayColumns(columnsWithMediaViewModel.columns),
             )
             .chunked(rows)
             .map { it.flatten().map { it.tile } }
-    }
-
-    private fun widthOf(spec: TileSpec): Int {
-        return if (iconTilesViewModel.largeTilesState.value.contains(spec))
-            columnsWithMediaViewModel.largeSpan
-        else 1
     }
 
     override suspend fun onActivated(): Nothing {

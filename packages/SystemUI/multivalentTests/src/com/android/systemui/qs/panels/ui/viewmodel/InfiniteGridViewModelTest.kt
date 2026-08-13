@@ -57,6 +57,30 @@ class InfiniteGridViewModelTest : SysuiTestCase() {
     private val Kosmos.underTest by Kosmos.Fixture { infiniteGridLayout.viewModelFactory.create() }
 
     @Test
+    fun displayColumns_capsAtThreeButPreservesNarrowLayouts() {
+        assertThat(ExpandedTileGridPolicy.displayColumns(1)).isEqualTo(1)
+        assertThat(ExpandedTileGridPolicy.displayColumns(2)).isEqualTo(2)
+        assertThat(ExpandedTileGridPolicy.displayColumns(3)).isEqualTo(3)
+        assertThat(ExpandedTileGridPolicy.displayColumns(4)).isEqualTo(3)
+        assertThat(ExpandedTileGridPolicy.displayColumns(8)).isEqualTo(3)
+    }
+
+    @Test
+    fun correctPagination_sevenUniqueTiles_twoRows_preservesOrder() =
+        with(kosmos) {
+            testScope.runTest {
+                val tiles = ('a'..'g').map { MockTileViewModel(TileSpec.create(it.toString())) }
+
+                val pages = underTest.splitIntoPages(tiles, rows = 2)
+
+                assertThat(pages).hasSize(2)
+                assertThat(pages[0]).isEqualTo(tiles.take(6))
+                assertThat(pages[1]).isEqualTo(tiles.drop(6))
+                assertThat(pages.flatten()).isEqualTo(tiles)
+            }
+        }
+
+    @Test
     fun correctPagination_underOnePage_sameOrder() =
         with(kosmos) {
             testScope.runTest {
@@ -100,19 +124,19 @@ class InfiniteGridViewModelTest : SysuiTestCase() {
                         smallTile(),
                         largeTile(),
                     )
+                // Every tile occupies one of the three compact columns.
                 // --- Page 1 ---
-                // [L L] [S] [S]
-                // [L L] [L L]
-                // [S] [S] [L L]
+                // [L] [S] [S]
+                // [L] [L] [S]
+                // [S] [L] [L]
                 // --- Page 2 ---
-                // [L L] [S] [S]
-                // [L L]
+                // [S] [S] [L]
 
                 val pages = underTest.splitIntoPages(tiles, rows = rows)
 
                 assertThat(pages).hasSize(2)
-                assertThat(pages[0]).isEqualTo(tiles.take(8))
-                assertThat(pages[1]).isEqualTo(tiles.drop(8))
+                assertThat(pages[0]).isEqualTo(tiles.take(9))
+                assertThat(pages[1]).isEqualTo(tiles.drop(9))
             }
         }
 
@@ -145,20 +169,21 @@ class InfiniteGridViewModelTest : SysuiTestCase() {
                         smallTile(),
                         largeTile(),
                     )
+                // Narrow two-column layouts remain narrow; every tile still uses one cell.
                 // --- Page 1 ---
-                // [L L] [S] [S]
-                // [L L] [L L]
-                // [S] [S] [L L]
+                // [L] [S]
+                // [S] [L]
+                // [L] [S]
                 // --- Page 2 ---
-                // [L L] [S] [S]
-                // [L L]
+                // [S] [L]
+                // [L] [S]
+                // [S] [L]
 
                 val pages = underTest.splitIntoPages(tiles, rows = rows)
 
-                assertThat(pages).hasSize(3)
-                assertThat(pages[0]).isEqualTo(tiles.take(4))
-                assertThat(pages[1]).isEqualTo(tiles.subList(4, 8))
-                assertThat(pages[2]).isEqualTo(tiles.drop(8))
+                assertThat(pages).hasSize(2)
+                assertThat(pages[0]).isEqualTo(tiles.take(6))
+                assertThat(pages[1]).isEqualTo(tiles.drop(6))
             }
         }
 
@@ -186,20 +211,16 @@ class InfiniteGridViewModelTest : SysuiTestCase() {
                         smallTile(),
                         largeTile(),
                     )
+                // Large-font mode does not change the compact one-cell placement policy.
                 // --- Page 1 ---
-                // [L L] [S] [S]
-                // [L L] [L L]
-                // [S] [S] [L L]
-                // --- Page 2 ---
-                // [L L] [S] [S]
-                // [L L]
+                // [L] [S] [L]
+                // [L] [S] [L]
+                // [L] [S] [L]
 
                 val pages = underTest.splitIntoPages(tiles, rows = rows)
 
-                assertThat(pages).hasSize(3)
-                assertThat(pages[0]).isEqualTo(tiles.take(3))
-                assertThat(pages[1]).isEqualTo(tiles.subList(3, 6))
-                assertThat(pages[2]).isEqualTo(tiles.drop(6))
+                assertThat(pages).hasSize(1)
+                assertThat(pages[0]).isEqualTo(tiles)
             }
         }
 

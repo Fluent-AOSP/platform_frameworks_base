@@ -189,6 +189,14 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     }
 
     @Test
+    fun compactTiles_useTwoRowsPerPage() {
+        assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
+
+        assertThat(context.resources.getInteger(R.integer.quick_settings_paginated_grid_num_rows))
+            .isEqualTo(2)
+    }
+
+    @Test
     fun compactTiles_preserveMinimumTouchTargets() {
         assumeTrue(context.resources.configuration.smallestScreenWidthDp < 600)
         val minimumTouchTarget = 48 * context.resources.displayMetrics.density

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -34,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android.compose.PlatformSliderDefaults
 import com.android.compose.animation.scene.ContentScope
 import com.android.compose.gesture.gesturesDisabled
 import com.android.compose.modifiers.thenIf
@@ -48,11 +51,14 @@ import com.android.systemui.qs.panels.ui.compose.TileGrid
 import com.android.systemui.qs.shared.ui.QuickSettings.Elements
 import com.android.systemui.qs.ui.viewmodel.QuickSettingsContainerViewModel
 import com.android.systemui.res.R
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.AudioStreamSliderViewModel
+import com.android.systemui.volume.panel.component.volume.ui.composable.VolumeSlider
 import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
 fun ContentScope.QuickSettingsContent(
     viewModel: QuickSettingsContainerViewModel,
+    volumeSliderViewModel: AudioStreamSliderViewModel,
     mediaInRow: Boolean,
     modifier: Modifier = Modifier,
     mediaSquishiness: () -> Float = { 1f },
@@ -90,6 +96,30 @@ fun ContentScope.QuickSettingsContent(
                                 ),
                         )
                     }
+                }
+            },
+        volume =
+            @Composable {
+                val volumeSliderState by volumeSliderViewModel.slider.collectAsStateWithLifecycle()
+                Box(Modifier.fillMaxWidth().sysuiResTag("volume_slider")) {
+                    VolumeSlider(
+                        state = volumeSliderState,
+                        onValueChange = { value ->
+                            volumeSliderViewModel.onValueChanged(volumeSliderState, value)
+                        },
+                        onValueChangeFinished = volumeSliderViewModel::onValueChangeFinished,
+                        onIconTapped = { volumeSliderViewModel.toggleMuted(volumeSliderState) },
+                        sliderColors = PlatformSliderDefaults.defaultPlatformSliderColors(),
+                        modifier = Modifier.fillMaxWidth(),
+                        hapticsViewModelFactory =
+                            volumeSliderViewModel.getSliderHapticsViewModelFactory(),
+                        showLabel = false,
+                        dimensions = QuickSettingsShade.Dimensions.VolumeSliderDimensions,
+                        materialSliderColors =
+                            SystemUISliderColors.Defaults.copy(
+                                inactiveTrackColor = MaterialTheme.colorScheme.surfaceContainer
+                            ),
+                    )
                 }
             },
         tiles =
@@ -142,6 +172,7 @@ fun ContentScope.QuickSettingsContent(
 private fun QuickSettingsPanelLayout(
     brightness: @Composable () -> Unit,
     tiles: @Composable () -> Unit,
+    volume: @Composable () -> Unit,
     media: @Composable () -> Unit,
     mediaInRow: Boolean,
     modifier: Modifier = Modifier,
@@ -152,7 +183,6 @@ private fun QuickSettingsPanelLayout(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier,
         ) {
-            brightness()
             Row(
                 horizontalArrangement = spacedBy(QuickSettingsShade.Dimensions.HorizontalPadding),
                 verticalAlignment = Alignment.CenterVertically,
@@ -160,6 +190,8 @@ private fun QuickSettingsPanelLayout(
                 Box(modifier = Modifier.weight(1f)) { tiles() }
                 Box(modifier = Modifier.weight(1f)) { media() }
             }
+            brightness()
+            volume()
         }
     } else {
         Column(
@@ -167,8 +199,9 @@ private fun QuickSettingsPanelLayout(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier,
         ) {
-            brightness()
             tiles()
+            brightness()
+            volume()
             media()
         }
     }

@@ -30,7 +30,6 @@ import com.android.systemui.shade.domain.interactor.shadeInteractor
 import com.android.systemui.shade.domain.interactor.shadeModeInteractor
 import com.android.systemui.statusbar.notification.stack.domain.interactor.notificationStackAppearanceInteractor
 import com.android.systemui.statusbar.ui.systemBarUtilsState
-import com.android.systemui.volume.dialog.domain.interactor.expandedAudioTileDetailsFeatureInteractor
 import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.audioStreamSliderViewModelFactory
 import com.android.systemui.window.domain.interactor.windowRootViewBlurInteractor
 import kotlinx.coroutines.CoroutineScope
@@ -59,8 +58,6 @@ val Kosmos.quickSettingsShadeOverlayContentViewModelFactory:
                     blurConfig = blurConfig,
                     windowRootViewBlurInteractor = windowRootViewBlurInteractor,
                     qsPanelAppearanceInteractor = qsPanelAppearanceInteractor,
-                    expandedAudioTileDetailsFeatureInteractor =
-                        expandedAudioTileDetailsFeatureInteractor,
                 )
             }
         }

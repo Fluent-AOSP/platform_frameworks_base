@@ -410,6 +410,15 @@ private fun ContentScope.QuickSettingsLayout(
                 VerticalSeparator(QuickSettingsShade.Dimensions.VerticalPadding)
             }
 
+            GridAnchor()
+            TileGrid(
+                viewModel = qsContainerViewModel.tileGridViewModel,
+                modifier = Modifier.fillMaxWidth(),
+                enableRevealEffect = TileRevealFlag.isEnabled,
+            )
+
+            VerticalSeparator(QuickSettingsShade.Dimensions.VerticalPadding)
+
             if (qsContainerViewModel.isBrightnessSliderVisible) {
                 Box(
                     Modifier.systemGestureExclusionInShade(
@@ -440,8 +449,9 @@ private fun ContentScope.QuickSettingsLayout(
                 VerticalSeparator(QuickSettingsShade.Dimensions.VolumeSliderExtraPadding)
                 Box(
                     Modifier.systemGestureExclusionInShade(
-                        enabled = { layoutState.transitionState is TransitionState.Idle }
-                    )
+                            enabled = { layoutState.transitionState is TransitionState.Idle }
+                        )
+                        .sysuiResTag("volume_slider")
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -489,15 +499,6 @@ private fun ContentScope.QuickSettingsLayout(
                     }
                 }
             }
-
-            VerticalSeparator(QuickSettingsShade.Dimensions.VerticalPadding)
-
-            GridAnchor()
-            TileGrid(
-                viewModel = qsContainerViewModel.tileGridViewModel,
-                modifier = Modifier.fillMaxWidth(),
-                enableRevealEffect = TileRevealFlag.isEnabled,
-            )
 
             val buildNumberViewModel =
                 rememberViewModel("QuickSettingsShadeOverlay.BuildNumber") {

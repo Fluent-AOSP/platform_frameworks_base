@@ -44,7 +44,6 @@ import com.android.systemui.statusbar.core.StatusBarForDesktop
 import com.android.systemui.statusbar.notification.stack.domain.interactor.NotificationStackAppearanceInteractor
 import com.android.systemui.statusbar.notification.stack.shared.model.ShadeScrimShape
 import com.android.systemui.statusbar.ui.SystemBarUtilsState
-import com.android.systemui.volume.dialog.domain.interactor.ExpandedAudioTileDetailsFeatureInteractor
 import com.android.systemui.volume.panel.component.volume.domain.model.SliderType
 import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.AudioStreamSliderViewModel
 import com.android.systemui.window.domain.interactor.WindowRootViewBlurInteractor
@@ -76,7 +75,6 @@ constructor(
     audioStreamSliderViewModelFactory: AudioStreamSliderViewModel.Factory,
     val audioDetailsViewModelFactory: AudioDetailsViewModel.Factory,
     val buildNumberViewModelFactory: BuildNumberViewModel.Factory,
-    val expandedAudioTileDetailsFeatureInteractor: ExpandedAudioTileDetailsFeatureInteractor,
     val shadeInteractor: ShadeInteractor,
     val shadeModeInteractor: ShadeModeInteractor,
     val sceneInteractor: SceneInteractor,
@@ -143,10 +141,8 @@ constructor(
         }
     }
 
-    private val showVolumeSlider = expandedAudioTileDetailsFeatureInteractor.isEnabled()
-
     val volumeSliderViewModel =
-        if (showVolumeSlider && volumeSliderCoroutineScope != null)
+        if (volumeSliderCoroutineScope != null)
             audioStreamSliderViewModelFactory.create(
                 AudioStreamSliderViewModel.FactoryAudioStreamWrapper(
                     SliderType.Stream(AudioStream(AudioManager.STREAM_MUSIC)).stream

@@ -44,6 +44,7 @@ import com.android.systemui.shade.domain.interactor.ShadeModeInteractor
 import com.android.systemui.shade.domain.interactor.ShadeStatusBarComponentsInteractor
 import com.android.systemui.shade.shared.model.ShadeMode
 import com.android.systemui.unfold.domain.interactor.UnfoldTransitionInteractor
+import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.AudioStreamSliderViewModel
 import com.android.systemui.window.domain.interactor.WindowRootViewBlurInteractor
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -65,6 +66,7 @@ class ShadeSceneContentViewModel
 constructor(
     @Main private val mainDispatcher: CoroutineDispatcher,
     val qsContainerViewModelFactory: QuickSettingsContainerViewModel.Factory,
+    val audioStreamSliderViewModelFactory: AudioStreamSliderViewModel.Factory,
     val quickQuickSettingsViewModel: QuickQuickSettingsViewModel.Factory,
     val shadeHeaderViewModelFactory: ShadeHeaderViewModel.Factory,
     val mediaCarouselInteractor: MediaCarouselInteractor,
