@@ -24,6 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.DeviceFontFamilyName
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import com.android.systemui.Flags.notificationShadeBlur
 import com.android.systemui.res.R
 
@@ -33,6 +37,33 @@ fun QuickSettingsTheme(content: @Composable () -> Unit) {
     val themedContext =
         remember(context) { ContextThemeWrapper(context, R.style.Theme_SystemUI_QuickSettings) }
     val platformColorScheme = MaterialTheme.colorScheme
+    val platformTypography = MaterialTheme.typography
+    val fluentFontFamily = remember {
+        // Segoe UI is supplied only by products that have redistribution rights. Android's
+        // device-font resolver safely falls back to the platform sans-serif when it is absent.
+        FontFamily(
+            Font(DeviceFontFamilyName("segoe-ui"), weight = FontWeight.Normal),
+            Font(DeviceFontFamilyName("segoe-ui"), weight = FontWeight.Bold),
+        )
+    }
+    val fluentTypography =
+        platformTypography.copy(
+            displayLarge = platformTypography.displayLarge.copy(fontFamily = fluentFontFamily),
+            displayMedium = platformTypography.displayMedium.copy(fontFamily = fluentFontFamily),
+            displaySmall = platformTypography.displaySmall.copy(fontFamily = fluentFontFamily),
+            headlineLarge = platformTypography.headlineLarge.copy(fontFamily = fluentFontFamily),
+            headlineMedium = platformTypography.headlineMedium.copy(fontFamily = fluentFontFamily),
+            headlineSmall = platformTypography.headlineSmall.copy(fontFamily = fluentFontFamily),
+            titleLarge = platformTypography.titleLarge.copy(fontFamily = fluentFontFamily),
+            titleMedium = platformTypography.titleMedium.copy(fontFamily = fluentFontFamily),
+            titleSmall = platformTypography.titleSmall.copy(fontFamily = fluentFontFamily),
+            bodyLarge = platformTypography.bodyLarge.copy(fontFamily = fluentFontFamily),
+            bodyMedium = platformTypography.bodyMedium.copy(fontFamily = fluentFontFamily),
+            bodySmall = platformTypography.bodySmall.copy(fontFamily = fluentFontFamily),
+            labelLarge = platformTypography.labelLarge.copy(fontFamily = fluentFontFamily),
+            labelMedium = platformTypography.labelMedium.copy(fontFamily = fluentFontFamily),
+            labelSmall = platformTypography.labelSmall.copy(fontFamily = fluentFontFamily),
+        )
     val useDarkPalette = platformColorScheme.surface.luminance() < .5f
     val accent =
         colorResource(
@@ -125,7 +156,7 @@ fun QuickSettingsTheme(content: @Composable () -> Unit) {
 
     MaterialTheme(
         colorScheme = fluentColorScheme,
-        typography = MaterialTheme.typography,
+        typography = fluentTypography,
         shapes = MaterialTheme.shapes,
     ) {
         CompositionLocalProvider(LocalContext provides themedContext) { content() }
