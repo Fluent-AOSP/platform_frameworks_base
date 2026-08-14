@@ -32,6 +32,7 @@ import android.animation.ValueAnimator;
 import android.annotation.IntDef;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.Log;
@@ -286,7 +287,6 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
     private boolean mScreenBlankingCallbackCalled;
     private Callback mCallback;
     private boolean mScreenOn;
-    private boolean mTransparentScrimBackground;
 
     // Scrim blanking callbacks
     private Runnable mPendingFrameCallback;
@@ -439,6 +439,13 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             public void onUiModeChanged() {
                 ScrimController.this.onThemeChanged();
             }
+
+            @Override
+            public void onConfigChanged(Configuration newConfig) {
+                if (mViewsAttached && mState != ScrimState.UNINITIALIZED) {
+                    mNotificationsScrim.post(ScrimController.this::applyAndDispatchState);
+                }
+            }
         });
         mColors = new GradientColors();
         mPrimaryBouncerToDreamingTransitionViewModel = primaryBouncerToDreamingTransitionViewModel;
@@ -473,8 +480,6 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             scrimState.setDefaultScrimAlpha(getDefaultScrimAlpha());
         }
 
-        mTransparentScrimBackground = notificationsScrim.getResources()
-                .getBoolean(R.bool.notification_scrim_transparent);
         updateScrims();
         mKeyguardUpdateMonitor.registerCallback(mKeyguardVisibilityCallback);
 
@@ -486,6 +491,14 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
         hydrateStateInternally(behindScrim);
 
         mViewsAttached = true;
+    }
+
+    private boolean useTransparentScrimBackground() {
+        return mNotificationsScrim != null
+                && mNotificationsScrim.getResources()
+                        .getBoolean(R.bool.notification_scrim_transparent)
+                && Flags.notificationShadeBlur()
+                && isBlurCurrentlySupported();
     }
 
     private void hydrateStateInternally(ScrimView behindScrim) {
@@ -1046,7 +1059,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
 
         if (!mExpansionAffectsAlpha) {
             debugLog("Early return in applyState");
-            if (Flags.notificationShadeBlur() && mState == ScrimState.UNLOCKED) {
+            if (useTransparentScrimBackground() && mState == ScrimState.UNLOCKED) {
                 mBehindAlpha = 0.0f;
                 mNotificationsAlpha = 0.0f;
             }
@@ -1062,7 +1075,10 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
             if (!mScreenOffAnimationController.shouldExpandNotifications()
                     && !mAnimatingPanelExpansionOnUnlock
                     && !occluding) {
-                if (mTransparentScrimBackground) {
+                if (useTransparentScrimBackground() && mState == ScrimState.UNLOCKED) {
+                    // The compositor-provided blurred backdrop supplies the continuous Fluent
+                    // Acrylic canvas. Dreaming, protected, and no-blur states retain the normal
+                    // platform scrim path.
                     mBehindAlpha = 0;
                     mNotificationsAlpha = 0;
                 } else if (mClipsQsScrim) {

@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.util.fastMap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,7 +31,9 @@ import com.android.compose.animation.scene.ContentScope
 import com.android.systemui.compose.modifiers.sysuiResTag
 import com.android.systemui.grid.ui.compose.VerticalSpannedGrid
 import com.android.systemui.qs.composefragment.ui.GridAnchor
+import com.android.systemui.qs.panels.shared.model.SizedTileImpl
 import com.android.systemui.qs.panels.ui.compose.infinitegrid.Tile
+import com.android.systemui.qs.panels.ui.compose.infinitegrid.TilePresentation
 import com.android.systemui.qs.panels.ui.viewmodel.BounceableTileViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.QuickQuickSettingsViewModel
 import com.android.systemui.qs.shared.ui.QuickSettings.Elements.toElementKey
@@ -42,8 +45,13 @@ fun ContentScope.QuickQuickSettings(
     modifier: Modifier = Modifier,
     listening: () -> Boolean,
 ) {
-    val columns = viewModel.columns
-    val sizedTiles = viewModel.tileViewModels
+    val useFluentCompactLayout = booleanResource(R.bool.config_use_fluent_compact_qqs)
+    val columns =
+        if (useFluentCompactLayout) QuickQuickSettingsViewModel.FLUENT_COMPACT_TILE_COUNT
+        else viewModel.columns
+    val sizedTiles =
+        if (useFluentCompactLayout) viewModel.fluentCompactTileViewModels
+        else viewModel.tileViewModels
     val tiles = sizedTiles.fastMap { it.tile }
     val squishiness by viewModel.squishinessViewModel.squishiness.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -53,7 +61,13 @@ fun ContentScope.QuickQuickSettings(
 
         val bounceables =
             remember(sizedTiles) { List(sizedTiles.size) { BounceableTileViewModel() } }
-        val spans by remember(sizedTiles) { derivedStateOf { sizedTiles.fastMap { it.width } } }
+        val spans by
+            remember(sizedTiles, useFluentCompactLayout) {
+                derivedStateOf {
+                    if (useFluentCompactLayout) List(sizedTiles.size) { 1 }
+                    else sizedTiles.fastMap { it.width }
+                }
+            }
         VerticalSpannedGrid(
             columns = columns,
             columnSpacing = dimensionResource(R.dimen.qs_tile_margin_horizontal),
@@ -67,11 +81,14 @@ fun ContentScope.QuickQuickSettings(
                 Tile(
                     tile = it.tile,
                     iconOnly = it.isIcon,
+                    presentation =
+                        if (useFluentCompactLayout) TilePresentation.FluentCompact
+                        else TilePresentation.Material,
                     squishiness = { squishiness },
                     coroutineScope = scope,
                     bounceableInfo =
                         bounceables.bounceableInfo(
-                            it,
+                            SizedTileImpl(it.tile, spans[spanIndex]),
                             index = spanIndex,
                             column = column,
                             columns = columns,

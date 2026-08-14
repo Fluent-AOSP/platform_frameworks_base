@@ -28,8 +28,12 @@
     <!-- Whether to enable clipping on Notification Views -->
     <bool name="notification_enable_clipping">true</bool>
 
-    <!-- Whether to enable transparent background for notification scrims -->
-    <bool name="notification_scrim_transparent">false</bool>
+    <!--
+        Keep the unlocked phone shade visually continuous with the Fluent Acrylic backdrop. The
+        notification cards retain their own surfaces; lockscreen and occluded states continue to
+        use ScrimController's protected-state rendering.
+    -->
+    <bool name="notification_scrim_transparent">true</bool>
 
     <!-- Control whether to force apps to give up control over the display of system bars at all
      times regardless of System Ui Flags.

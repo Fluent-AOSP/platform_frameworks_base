@@ -16,6 +16,7 @@
 
 package com.android.systemui.qs.panels.ui.compose
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.util.TypedValue
 import androidx.annotation.ColorRes
@@ -186,6 +187,48 @@ class QuickSettingsTokenTest : SysuiTestCase() {
                 )
             )
             .isAtLeast(4.5)
+    }
+
+    @Test
+    fun fluentCollapsedShadePolicy_enabledOnPhoneAndDisabledAtSw600dp() {
+        val phoneResources =
+            context
+                .createConfigurationContext(
+                    Configuration(context.resources.configuration).apply {
+                        smallestScreenWidthDp = 360
+                        screenWidthDp = 360
+                        screenHeightDp = 640
+                    }
+                )
+                .resources
+        val landscapePhoneResources =
+            context
+                .createConfigurationContext(
+                    Configuration(context.resources.configuration).apply {
+                        orientation = Configuration.ORIENTATION_LANDSCAPE
+                        smallestScreenWidthDp = 360
+                        screenWidthDp = 640
+                        screenHeightDp = 360
+                    }
+                )
+                .resources
+        val largeScreenResources =
+            context
+                .createConfigurationContext(
+                    Configuration(context.resources.configuration).apply {
+                        smallestScreenWidthDp = 600
+                        screenWidthDp = 600
+                        screenHeightDp = 960
+                    }
+                )
+                .resources
+
+        assertThat(phoneResources.getBoolean(R.bool.config_use_fluent_compact_qqs)).isTrue()
+        assertThat(phoneResources.getBoolean(R.bool.notification_scrim_transparent)).isTrue()
+        assertThat(landscapePhoneResources.getBoolean(R.bool.notification_scrim_transparent))
+            .isFalse()
+        assertThat(largeScreenResources.getBoolean(R.bool.config_use_fluent_compact_qqs)).isFalse()
+        assertThat(largeScreenResources.getBoolean(R.bool.notification_scrim_transparent)).isFalse()
     }
 
     @Test

@@ -21,8 +21,12 @@ import android.testing.TestableLooper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertDoesNotExist
+import androidx.compose.ui.test.assertHeightIsEqualTo
+import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.compose.animation.scene.TestContentScope
@@ -38,6 +42,8 @@ import com.android.systemui.kosmos.runTest
 import com.android.systemui.kosmos.testScope
 import com.android.systemui.notifications.intelligence.rules.ui.viewmodel.notificationRulesParentViewModelFactory
 import com.android.systemui.qs.composefragment.dagger.usingMediaInComposeFragment
+import com.android.systemui.qs.panels.domain.interactor.qsPreferencesInteractor
+import com.android.systemui.qs.panels.ui.compose.infinitegrid.TileTestTags
 import com.android.systemui.qs.pipeline.domain.interactor.currentTilesInteractor
 import com.android.systemui.qs.pipeline.shared.TileSpec
 import com.android.systemui.scene.session.shared.SessionStorage
@@ -52,10 +58,12 @@ import com.android.systemui.statusbar.notification.stack.ui.view.notificationScr
 import com.android.systemui.statusbar.notification.stack.ui.viewmodel.notificationsPlaceholderViewModelFactory
 import com.android.systemui.statusbar.phone.ui.tintedIconManagerFactory
 import com.android.systemui.testKosmos
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -80,6 +88,9 @@ class ShadeSceneTest : SysuiTestCase() {
     @Test
     fun testSingleShadeHierarchy() =
         with(kosmos) {
+            assumeTrue(
+                this@ShadeSceneTest.context.resources.configuration.smallestScreenWidthDp < 600
+            )
             testScope.runTest {
                 val shadeSession =
                     object : SaveableSession, Session by Session(SessionStorage()) {
@@ -93,6 +104,9 @@ class ShadeSceneTest : SysuiTestCase() {
                     }
 
                 usingMediaInComposeFragment = true
+                val specs = (1..5).map { TileSpec.create("compact_$it") }
+                qsPreferencesInteractor.setLargeTilesSpecs(setOf(specs[1], specs[3]))
+                currentTilesInteractor.setTiles(specs)
 
                 enableSingleShade()
                 runCurrent()
@@ -121,12 +135,33 @@ class ShadeSceneTest : SysuiTestCase() {
                     }
                 }
 
-                currentTilesInteractor.setTiles(listOf(TileSpec.create("small")))
                 runCurrent()
                 composeTestRule.waitForIdle()
 
-                // Verify that the qs small tile exists.
-                composeTestRule.onNodeWithTag(resIdToTestTag("qs_tile_small")).assertExists()
+                val compactSurfaces =
+                    specs.take(4).map { spec ->
+                        composeTestRule.onNodeWithTag(
+                            resIdToTestTag(TileTestTags.fluentCompactSurface(spec))
+                        )
+                    }
+                val compactLabels =
+                    specs.take(4).map { spec ->
+                        composeTestRule.onNodeWithTag(
+                            resIdToTestTag(TileTestTags.fluentCompactLabel(spec))
+                        )
+                    }
+                compactSurfaces.forEach { it.assertExists().assertHeightIsEqualTo(56.dp) }
+                compactLabels.forEach { it.assertExists() }
+                val surfaceBounds = compactSurfaces.map { it.getBoundsInRoot() }
+                val labelBounds = compactLabels.map { it.getBoundsInRoot() }
+                assertThat(surfaceBounds.map { it.top }.distinct()).hasSize(1)
+                assertThat(surfaceBounds.map { it.left }).isInOrder()
+                surfaceBounds.zip(labelBounds).forEach { (surface, label) ->
+                    assertThat(label.top).isAtLeast(surface.bottom)
+                }
+                composeTestRule
+                    .onNodeWithTag(resIdToTestTag(TileTestTags.fluentCompactSurface(specs.last())))
+                    .assertDoesNotExist()
 
                 coroutineContext.cancelChildren()
             }

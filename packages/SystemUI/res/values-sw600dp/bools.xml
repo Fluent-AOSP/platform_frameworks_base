@@ -16,6 +16,9 @@
 */
 -->
 <resources>
+    <!-- Large-screen notification panes retain the platform scrim separation. -->
+    <bool name="notification_scrim_transparent">false</bool>
+
     <!-- Whether to show the user switcher in quick settings when only a single user is present. -->
     <bool name="qs_show_user_switcher_for_single_user">true</bool>
 

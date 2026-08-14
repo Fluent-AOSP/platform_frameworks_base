@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
@@ -106,6 +107,7 @@ import com.android.systemui.qs.shared.ui.QuickSettings
 import com.android.systemui.qs.shared.ui.QuickSettings.Elements.SplitShadeQuickSettings
 import com.android.systemui.qs.ui.composable.QuickSettingsContent
 import com.android.systemui.qs.ui.composable.QuickSettingsShade
+import com.android.systemui.qs.ui.composable.QuickSettingsTheme
 import com.android.systemui.res.R
 import com.android.systemui.scene.session.ui.composable.SaveableSession
 import com.android.systemui.scene.shared.model.Scenes
@@ -310,6 +312,7 @@ private fun ContentScope.SingleShade(
         layoutState.isTransitioningBetween(Scenes.Gone, Scenes.Shade) ||
             layoutState.isTransitioningBetween(Scenes.Lockscreen, Scenes.Shade)
     val mediaInRow = viewModel.showMediaInRow
+    val useFluentCollapsedShade = booleanResource(R.bool.config_use_fluent_compact_qqs)
     val notificationStackPadding = dimensionResource(id = R.dimen.notification_side_paddings_single)
 
     val systemBarsPadding = WindowInsets.systemBars.asPaddingValues()
@@ -401,11 +404,24 @@ private fun ContentScope.SingleShade(
                                         viewModel.quickQuickSettingsViewModel.create()
                                     }
                                 if (viewModel.isQsEnabled) {
-                                    QuickQuickSettings(
-                                        qqsViewModel,
-                                        listening = { listening },
-                                        modifier = Modifier.sysuiResTag("quick_qs_panel"),
-                                    )
+                                    val qqsModifier = Modifier.sysuiResTag("quick_qs_panel")
+                                    if (useFluentCollapsedShade) {
+                                        QuickSettingsTheme(
+                                            useTranslucentControls = viewModel.isTransparencyEnabled
+                                        ) {
+                                            QuickQuickSettings(
+                                                qqsViewModel,
+                                                listening = { listening },
+                                                modifier = qqsModifier,
+                                            )
+                                        }
+                                    } else {
+                                        QuickQuickSettings(
+                                            qqsViewModel,
+                                            listening = { listening },
+                                            modifier = qqsModifier,
+                                        )
+                                    }
                                 }
                             }
                         },
@@ -443,9 +459,10 @@ private fun ContentScope.SingleShade(
                     stackScrollView = notificationStackScrollView,
                     viewModel = notificationsPlaceholderViewModel,
                     notificationRulesParentViewModel = notificationRulesParentViewModel,
-                    shouldPunchHoleBehindScrim = true,
+                    shouldPunchHoleBehindScrim = !useFluentCollapsedShade,
                     shouldContentFillMaxSize = true,
                     shouldScrimBackgroundFillMaxHeight = true,
+                    shouldDrawScrimBackground = !useFluentCollapsedShade,
                     isTransparencyEnabled = viewModel.isTransparencyEnabled,
                     stackTopPadding = notificationStackPadding,
                     stackBottomPadding = navBarHeight,

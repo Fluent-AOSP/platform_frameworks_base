@@ -23,6 +23,9 @@
     <!-- Use collapsed layout for media player in landscape QQS -->
     <bool name="config_quickSettingsMediaLandscapeCollapsed">false</bool>
 
+    <!-- Large-screen Quick Settings keeps the platform adaptive QQS layout. -->
+    <bool name="config_use_fluent_compact_qqs">false</bool>
+
     <!-- Nav bar button default ordering/layout -->
     <string name="config_navBarLayout" translatable="false">left;back,home,recent;right</string>
 

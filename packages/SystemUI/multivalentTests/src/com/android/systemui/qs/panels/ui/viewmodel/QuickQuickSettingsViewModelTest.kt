@@ -83,6 +83,25 @@ class QuickQuickSettingsViewModelTest : SysuiTestCase() {
     }
 
     @Test
+    fun fluentCompactTiles_firstFourInUserOrderPreserveOriginalClassification() =
+        with(kosmos) {
+            testScope.runTest {
+                val compactTiles = underTest.fluentCompactTileViewModels
+
+                assertThat(compactTiles.map { it.tile.spec }).isEqualTo(tiles.take(4))
+                assertThat(compactTiles.map { it.isIcon })
+                    .containsExactly(true, true, false, true)
+                    .inOrder()
+
+                currentTilesInteractor.setTiles(tiles.take(3))
+                runCurrent()
+
+                assertThat(underTest.fluentCompactTileViewModels.map { it.tile.spec })
+                    .isEqualTo(tiles.take(3))
+            }
+        }
+
+    @Test
     fun splitIntoRows_onlyFirstTwoRowsOfTiles() =
         with(kosmos) {
             testScope.runTest {

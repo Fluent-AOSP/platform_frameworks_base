@@ -32,7 +32,10 @@ import com.android.systemui.Flags.notificationShadeBlur
 import com.android.systemui.res.R
 
 @Composable
-fun QuickSettingsTheme(content: @Composable () -> Unit) {
+fun QuickSettingsTheme(
+    useTranslucentControls: Boolean = notificationShadeBlur(),
+    content: @Composable () -> Unit,
+) {
     val context = LocalContext.current
     val themedContext =
         remember(context) { ContextThemeWrapper(context, R.style.Theme_SystemUI_QuickSettings) }
@@ -80,7 +83,6 @@ fun QuickSettingsTheme(content: @Composable () -> Unit) {
             if (useDarkPalette) R.color.fluent_qs_surface_opaque_dark
             else R.color.fluent_qs_surface_opaque_light
         )
-    val useTranslucentControls = notificationShadeBlur()
     val controlFill =
         colorResource(
             when {

@@ -23,5 +23,8 @@
     <!--  True when small screen (<sw600dp) is landscape. -->
     <bool name="is_small_screen_landscape">true</bool>
 
+    <!-- Phone landscape may use split shade, which retains platform scrim separation. -->
+    <bool name="notification_scrim_transparent">false</bool>
+
     <bool name="volume_dialog_ringer_drawer_should_open_to_the_side">true</bool>
 </resources>

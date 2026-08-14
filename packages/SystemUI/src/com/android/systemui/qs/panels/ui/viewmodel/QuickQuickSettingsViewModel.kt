@@ -79,6 +79,12 @@ constructor(
             .let { splitInRowsSequence(it, columns).take(rows).toList().flatten() }
     }
 
+    val fluentCompactTileViewModels by derivedStateOf {
+        currentTiles.take(FLUENT_COMPACT_TILE_COUNT).map {
+            SizedTileImpl(TileViewModel(it.tile, it.spec, it.expandable), it.spec.width())
+        }
+    }
+
     override suspend fun onActivated() {
         coroutineScope {
             launch { qsColumnsViewModel.activate() }
@@ -94,6 +100,8 @@ constructor(
     private fun TileSpec.width(): Int = if (largeTiles.contains(this)) largeTilesSpan else 1
 
     companion object {
+        const val FLUENT_COMPACT_TILE_COUNT = 4
+
         /** Behavior of the media carousel in quick quick settings */
         @VisibleForTesting
         val mediaUiBehavior: MediaUiBehavior
