@@ -29,9 +29,11 @@ license {
     ],
     license_kinds: [
         "SPDX-license-identifier-Apache-2.0",
+        "SPDX-license-identifier-MIT",
     ],
     license_text: [
         "NOTICE",
+        "fluent_system_icons/LICENSE",
     ],
 }
 
