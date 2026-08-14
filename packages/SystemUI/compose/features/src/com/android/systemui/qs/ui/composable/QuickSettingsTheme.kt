@@ -43,6 +43,7 @@ fun QuickSettingsTheme(content: @Composable () -> Unit) {
         // device-font resolver safely falls back to the platform sans-serif when it is absent.
         FontFamily(
             Font(DeviceFontFamilyName("segoe-ui"), weight = FontWeight.Normal),
+            Font(DeviceFontFamilyName("segoe-ui"), weight = FontWeight.Medium),
             Font(DeviceFontFamilyName("segoe-ui"), weight = FontWeight.Bold),
         )
     }
