@@ -22,4 +22,5 @@
     <color name="fluent_qs_control_fill_disabled">@color/fluent_qs_control_fill_disabled_dark</color>
     <color name="fluent_qs_control_stroke">@color/fluent_qs_control_stroke_dark</color>
     <color name="fluent_qs_surface_opaque">@color/fluent_qs_surface_opaque_dark</color>
+    <color name="fluent_qs_acrylic_tint">@color/fluent_qs_acrylic_tint_dark</color>
 </resources>

@@ -16,6 +16,7 @@
 
 package com.android.systemui.qs.ui.viewmodel
 
+import com.android.systemui.activityStarter
 import com.android.systemui.brightness.ui.viewmodel.brightnessSliderViewModelFactory
 import com.android.systemui.display.domain.interactor.shadeDisplayTypeRepository
 import com.android.systemui.kosmos.Kosmos
@@ -44,6 +45,7 @@ val Kosmos.quickSettingsContainerViewModelFactory by
                     mediaViewModelFactory = mediaViewModelFactory,
                     mediaInRowInLandscapeViewModelFactory = mediaInRowInLandscapeViewModelFactory,
                     shadeDisplayTypeRepository = shadeDisplayTypeRepository,
+                    activityStarter = activityStarter,
                 )
             }
         }

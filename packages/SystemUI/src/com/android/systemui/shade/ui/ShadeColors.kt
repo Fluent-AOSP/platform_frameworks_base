@@ -45,6 +45,22 @@ object ShadeColors {
         }
     }
 
+    /**
+     * Fluent transient Acrylic tint for Quick Settings and shade surfaces.
+     *
+     * Android's window compositor supplies the backdrop blur. The tint remains translucent so the
+     * blurred wallpaper contributes color and luminosity, while the fallback stays opaque when
+     * cross-window blur or transparency is unavailable.
+     */
+    @JvmStatic
+    fun quickSettingsAcrylic(context: Context, blurSupported: Boolean): Int {
+        return if (blurSupported) {
+            context.getColor(R.color.fluent_qs_acrylic_tint)
+        } else {
+            shadePanelFallback(context)
+        }
+    }
+
     @JvmStatic
     fun notificationScrim(context: Context, blurSupported: Boolean): Int {
         return if (blurSupported) {

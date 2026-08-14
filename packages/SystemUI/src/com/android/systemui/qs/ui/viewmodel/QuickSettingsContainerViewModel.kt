@@ -16,6 +16,8 @@
 
 package com.android.systemui.qs.ui.viewmodel
 
+import android.content.Intent
+import android.provider.Settings
 import android.view.Display
 import com.android.systemui.brightness.ui.viewmodel.BrightnessSliderViewModel
 import com.android.systemui.display.data.repository.DisplayTypeRepository
@@ -25,6 +27,7 @@ import com.android.systemui.media.controls.ui.controller.MediaHierarchyManager.C
 import com.android.systemui.media.remedia.ui.compose.MediaUiBehavior
 import com.android.systemui.media.remedia.ui.viewmodel.MediaCarouselVisibility
 import com.android.systemui.media.remedia.ui.viewmodel.MediaViewModel
+import com.android.systemui.plugins.ActivityStarter
 import com.android.systemui.qs.panels.ui.viewmodel.DetailsViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.EditModeViewModel
 import com.android.systemui.qs.panels.ui.viewmodel.MediaInRowInLandscapeViewModel
@@ -51,6 +54,7 @@ constructor(
     val mediaViewModelFactory: MediaViewModel.Factory,
     mediaInRowInLandscapeViewModelFactory: MediaInRowInLandscapeViewModel.Factory,
     @ShadeDisplayAware shadeDisplayTypeRepository: DisplayTypeRepository,
+    private val activityStarter: ActivityStarter,
 ) : HydratedActivatable() {
 
     val isBrightnessSliderVisible by
@@ -77,6 +81,10 @@ constructor(
         get() = qsMediaInRowViewModel.shouldMediaShowInRow
 
     fun onMediaSwipeToDismiss() = mediaCarouselInteractor.onSwipeToDismiss()
+
+    fun onVolumeSettingsClicked() {
+        activityStarter.startActivity(Intent(Settings.Panel.ACTION_VOLUME), true)
+    }
 
     private val qsMediaInRowViewModel =
         mediaInRowInLandscapeViewModelFactory.create(LOCATION_QS, mediaUiBehavior)

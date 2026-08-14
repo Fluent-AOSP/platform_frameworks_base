@@ -324,7 +324,9 @@ constructor(
         override val a11yContentDescription: String,
         override val isMutable: Boolean,
         val audioStreamModel: AudioStreamModel,
-    ) : SliderState
+    ) : SliderState {
+        override val isMuted: Boolean = audioStreamModel.isMuted
+    }
 
     @AssistedFactory
     interface Factory {

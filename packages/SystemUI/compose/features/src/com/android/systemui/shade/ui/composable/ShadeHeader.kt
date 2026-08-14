@@ -689,6 +689,7 @@ private fun BatteryInfo(
         showIcon = showIcon,
         showEstimate = useExpandedFormat,
         textColor = textColor,
+        useFluentIcon = true,
         modifier = modifier.sysuiResTag(ShadeHeader.TestTags.BatteryTestTag),
     )
 }

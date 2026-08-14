@@ -130,6 +130,7 @@ fun Toolbar(
             IconButton(
                 model = viewModel.powerButtonViewModel,
                 modifier = Modifier.sysuiResTag("pm_lite"),
+                overrideIconRes = R.drawable.ic_fluent_power_24_regular,
             )
         }
     }
@@ -150,6 +151,7 @@ private fun SharedTransitionScope.StandardToolbarLayout(
             Modifier.sysuiResTag("multi_user_switch"),
             iconColor = Color.Unspecified,
             useIconColorProtection = true,
+            overrideIconRes = R.drawable.ic_fluent_person_24_regular,
         )
 
         // Edit mode button
@@ -161,6 +163,7 @@ private fun SharedTransitionScope.StandardToolbarLayout(
         IconButton(
             model = viewModel.settingsButtonViewModel,
             modifier = Modifier.sysuiResTag("settings_button_container"),
+            overrideIconRes = R.drawable.ic_fluent_settings_24_regular,
         )
 
         // Security info button
@@ -189,6 +192,7 @@ private fun IconButton(
     modifier: Modifier = Modifier,
     iconColor: Color = MaterialTheme.colorScheme.onSurface,
     useIconColorProtection: Boolean = false,
+    overrideIconRes: Int? = null,
 ) {
     if (model == null) {
         return
@@ -230,6 +234,7 @@ private fun IconButton(
                     icon = model.icon,
                     modifier = Modifier.size(IconButtonDimensions.IconSize),
                     tint = iconColor,
+                    overrideIconRes = overrideIconRes,
                 )
             }
         }
@@ -286,7 +291,8 @@ private fun PowerMenuToggleButton(
             }
 
         Icon(
-            icon = viewModel.icon,
+            painter = painterResource(R.drawable.ic_fluent_power_24_regular),
+            contentDescription = viewModel.icon.contentDescription?.load(),
             tint = fgColor,
             modifier = Modifier.size(IconButtonDimensions.IconSize),
         )
@@ -295,7 +301,8 @@ private fun PowerMenuToggleButton(
             animateFloatAsState(targetValue = viewModel.chevronRotation, label = "ChevronRotation")
 
         Icon(
-            icon = viewModel.chevron,
+            painter = painterResource(R.drawable.ic_fluent_chevron_down_24_regular),
+            contentDescription = viewModel.chevron.contentDescription?.load(),
             tint = fgColor,
             modifier =
                 Modifier.size(IconButtonDimensions.IconSize).graphicsLayer {
@@ -307,8 +314,17 @@ private fun PowerMenuToggleButton(
 
 // TODO(b/394738023): Use com.android.systemui.common.ui.compose.Icon instead.
 @Composable
-private fun ToolbarIcon(icon: Icon, modifier: Modifier = Modifier, tint: Color) {
+private fun ToolbarIcon(
+    icon: Icon,
+    modifier: Modifier = Modifier,
+    tint: Color,
+    overrideIconRes: Int? = null,
+) {
     val contentDescription = icon.contentDescription?.load()
+    if (overrideIconRes != null) {
+        Icon(painterResource(overrideIconRes), contentDescription, modifier, tint)
+        return
+    }
     when (icon) {
         is Icon.Loaded ->
             Icon(icon.drawable.toBitmap().asImageBitmap(), contentDescription, modifier, tint)

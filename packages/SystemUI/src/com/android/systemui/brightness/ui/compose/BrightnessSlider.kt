@@ -71,10 +71,9 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
@@ -106,6 +105,8 @@ import com.android.systemui.haptics.slider.SeekableSliderTrackerConfig
 import com.android.systemui.haptics.slider.SliderHapticFeedbackConfig
 import com.android.systemui.haptics.slider.compose.ui.SliderHapticsViewModel
 import com.android.systemui.lifecycle.rememberViewModel
+import com.android.systemui.qs.ui.compose.FluentQuickSettingsSliderThumb
+import com.android.systemui.qs.ui.compose.FluentQuickSettingsSliderTrack
 import com.android.systemui.qs.ui.compose.borderOnFocus
 import com.android.systemui.res.R
 import com.android.systemui.util.policy.PolicyRestriction
@@ -198,219 +199,196 @@ fun BrightnessSlider(
         }
     }
 
-    Slider(
-        value = animatedValue,
-        valueRange = floatValueRange,
-        enabled = enabled,
-        colors = colors,
-        onValueChange = {
-            if (enabled) {
-                if (!overriddenByAppState) {
-                    hapticsViewModel.onValueChange(it)
-                    value = it.toInt()
-                    onDrag(value)
-                }
-            }
-        },
-        onValueChangeFinished = {
-            if (enabled) {
-                if (!overriddenByAppState) {
-                    hapticsViewModel.onValueChangeEnded()
-                    onStop(value)
-                }
-            }
-        },
-        modifier =
-            modifier
-                .sysuiResTag("slider")
-                .semantics(mergeDescendants = true) {
-                    this.text = AnnotatedString(contentDescription)
-                }
-                .sliderPercentage {
-                    (value - valueRange.first).toFloat() / (valueRange.last - valueRange.first)
-                }
-                .thenIf(isRestricted) {
-                    Modifier.clickable {
-                        if (restriction is PolicyRestriction.Restricted) {
-                            onRestrictedClick(restriction)
-                        }
-                    }
-                },
-        interactionSource = interactionSource,
-        thumb = {
-            SliderDefaults.Thumb(
-                interactionSource = interactionSource,
-                enabled = enabled,
-                thumbSize = DpSize(dimensions.thumbWidth, dimensions.thumbHeight),
-                colors = colors,
-            )
-        },
-        track = track@{ sliderState ->
-                if (dimensions.useFluentStyle) {
-                    val fraction = sliderState.coercedValueAsFraction
-                    var trackWidthPx by remember { mutableIntStateOf(0) }
-                    val iconEndInsetPx =
-                        with(LocalDensity.current) {
-                            (IconPadding + dimensions.iconSize.width / 2).toPx()
-                        }
-                    val iconActiveThreshold =
-                        if (trackWidthPx > 0) {
-                            1f - iconEndInsetPx / trackWidthPx
+    val fluentFraction =
+        ((animatedValue - floatValueRange.start) /
+                (floatValueRange.endInclusive - floatValueRange.start))
+            .coerceIn(0f, 1f)
+    Box(modifier = if (dimensions.useFluentStyle) modifier else Modifier) {
+        if (dimensions.useFluentStyle) {
+            Icon(
+                painter =
+                    painterResource(
+                        if (fluentFraction < 0.5f) {
+                            R.drawable.ic_fluent_brightness_low_24_regular
                         } else {
-                            1f
+                            R.drawable.ic_fluent_brightness_high_24_regular
                         }
-                    val showIconActive = fraction >= iconActiveThreshold.coerceIn(0f, 1f)
-                    val fluentIconColor =
-                        when {
-                            !enabled -> colors.disabledInactiveTickColor
-                            showIconActive -> activeIconColor
-                            else -> inactiveIconColor
-                        }
-                    Box(
-                        Modifier.motionTestValues {
-                                (if (showIconActive) 1f else 0f) exportAs
-                                    BrightnessSliderMotionTestKeys.ActiveIconAlpha
-                                (if (showIconActive) 0f else 1f) exportAs
-                                    BrightnessSliderMotionTestKeys.InactiveIconAlpha
-                            }
-                            .fillMaxWidth()
-                            .height(dimensions.trackHeight)
-                            .onSizeChanged { trackWidthPx = it.width }
-                            .drawWithCache {
-                                val lineHeight = dimensions.trackLineHeight.toPx()
-                                val lineTop = (size.height - lineHeight) / 2f
-                                val lineCorner = CornerRadius(lineHeight / 2f)
-                                val activeWidth = size.width * fraction
-                                val activeLeft =
-                                    if (layoutDirection == LayoutDirection.Rtl) {
-                                        size.width - activeWidth
-                                    } else {
-                                        0f
-                                    }
-                                val activeTrackColor =
-                                    if (enabled) colors.activeTrackColor
-                                    else colors.disabledActiveTrackColor
-                                val inactiveTrackColor =
-                                    if (enabled) colors.inactiveTrackColor
-                                    else colors.disabledInactiveTrackColor
+                    ),
+                contentDescription = null,
+                tint =
+                    if (enabled) {
+                        inactiveIconColor
+                    } else {
+                        colors.disabledInactiveTickColor
+                    },
+                modifier = Modifier.align(Alignment.CenterStart).size(48.dp).padding(12.dp),
+            )
+        }
 
-                                onDrawBehind {
-                                    drawRoundRect(
-                                        color = inactiveTrackColor,
-                                        topLeft = Offset(0f, lineTop),
-                                        size = Size(size.width, lineHeight),
-                                        cornerRadius = lineCorner,
-                                    )
-                                    if (activeWidth > 0f) {
-                                        drawRoundRect(
-                                            color = activeTrackColor,
-                                            topLeft = Offset(activeLeft, lineTop),
-                                            size = Size(activeWidth, lineHeight),
-                                            cornerRadius = lineCorner,
-                                        )
-                                    }
-                                }
+        Slider(
+            value = animatedValue,
+            valueRange = floatValueRange,
+            enabled = enabled,
+            colors = colors,
+            onValueChange = {
+                if (enabled) {
+                    if (!overriddenByAppState) {
+                        hapticsViewModel.onValueChange(it)
+                        value = it.toInt()
+                        onDrag(value)
+                    }
+                }
+            },
+            onValueChangeFinished = {
+                if (enabled) {
+                    if (!overriddenByAppState) {
+                        hapticsViewModel.onValueChangeEnded()
+                        onStop(value)
+                    }
+                }
+            },
+            modifier =
+                (if (dimensions.useFluentStyle) {
+                        Modifier.fillMaxWidth().padding(start = 48.dp)
+                    } else {
+                        modifier
+                    })
+                    .sysuiResTag("slider")
+                    .semantics(mergeDescendants = true) {
+                        this.text = AnnotatedString(contentDescription)
+                    }
+                    .sliderPercentage {
+                        (value - valueRange.first).toFloat() / (valueRange.last - valueRange.first)
+                    }
+                    .thenIf(isRestricted) {
+                        Modifier.clickable {
+                            if (restriction is PolicyRestriction.Restricted) {
+                                onRestrictedClick(restriction)
                             }
-                    ) {
-                        Icon(
-                            painter = painter,
-                            contentDescription = null,
-                            tint = fluentIconColor,
-                            modifier =
-                                Modifier.align(Alignment.CenterEnd)
-                                    .padding(end = IconPadding)
-                                    .size(iconSize),
+                        }
+                    },
+            interactionSource = interactionSource,
+            thumb = {
+                if (dimensions.useFluentStyle) {
+                    FluentQuickSettingsSliderThumb(
+                        enabled = enabled,
+                        accentColor = colors.activeTrackColor,
+                        surfaceColor = MaterialTheme.colorScheme.surface,
+                        outlineColor = MaterialTheme.colorScheme.outlineVariant,
+                    )
+                } else {
+                    SliderDefaults.Thumb(
+                        interactionSource = interactionSource,
+                        enabled = enabled,
+                        thumbSize = DpSize(dimensions.thumbWidth, dimensions.thumbHeight),
+                        colors = colors,
+                    )
+                }
+            },
+            track = track@{ sliderState ->
+                    if (dimensions.useFluentStyle) {
+                        val fraction = sliderState.coercedValueAsFraction
+                        FluentQuickSettingsSliderTrack(
+                            fraction = fraction,
+                            enabled = enabled,
+                            activeColor =
+                                if (enabled) colors.activeTrackColor
+                                else colors.disabledActiveTrackColor,
+                            inactiveColor =
+                                if (enabled) colors.inactiveTrackColor
+                                else colors.disabledInactiveTrackColor,
+                            modifier = Modifier.height(dimensions.trackHeight),
+                        )
+                        return@track
+                    }
+
+                    var showIconActive by remember { mutableStateOf(true) }
+                    val iconActiveAlphaAnimatable = remember {
+                        Animatable(
+                            initialValue = 1f,
+                            typeConverter = Float.VectorConverter,
+                            label = "iconActiveAlpha",
                         )
                     }
-                    return@track
-                }
 
-                var showIconActive by remember { mutableStateOf(true) }
-                val iconActiveAlphaAnimatable = remember {
-                    Animatable(
-                        initialValue = 1f,
-                        typeConverter = Float.VectorConverter,
-                        label = "iconActiveAlpha",
-                    )
-                }
-
-                val iconInactiveAlphaAnimatable = remember {
-                    Animatable(
-                        initialValue = 0f,
-                        typeConverter = Float.VectorConverter,
-                        label = "iconInactiveAlpha",
-                    )
-                }
-
-                LaunchedEffect(
-                    iconActiveAlphaAnimatable,
-                    iconInactiveAlphaAnimatable,
-                    showIconActive,
-                ) {
-                    if (showIconActive) {
-                        launch { iconActiveAlphaAnimatable.appear() }
-                        launch { iconInactiveAlphaAnimatable.disappear() }
-                    } else {
-                        launch { iconActiveAlphaAnimatable.disappear() }
-                        launch { iconInactiveAlphaAnimatable.appear() }
+                    val iconInactiveAlphaAnimatable = remember {
+                        Animatable(
+                            initialValue = 0f,
+                            typeConverter = Float.VectorConverter,
+                            label = "iconInactiveAlpha",
+                        )
                     }
-                }
 
-                SliderDefaults.Track(
-                    sliderState = sliderState,
-                    modifier =
-                        Modifier.motionTestValues {
-                                iconActiveAlphaAnimatable.value exportAs
-                                    BrightnessSliderMotionTestKeys.ActiveIconAlpha
-                                iconInactiveAlphaAnimatable.value exportAs
-                                    BrightnessSliderMotionTestKeys.InactiveIconAlpha
-                            }
-                            .height(dimensions.trackHeight)
-                            .drawWithContent {
-                                drawContent()
+                    LaunchedEffect(
+                        iconActiveAlphaAnimatable,
+                        iconInactiveAlphaAnimatable,
+                        showIconActive,
+                    ) {
+                        if (showIconActive) {
+                            launch { iconActiveAlphaAnimatable.appear() }
+                            launch { iconInactiveAlphaAnimatable.disappear() }
+                        } else {
+                            launch { iconActiveAlphaAnimatable.disappear() }
+                            launch { iconInactiveAlphaAnimatable.appear() }
+                        }
+                    }
 
-                                val yOffset = size.height / 2 - iconSize.toSize().height / 2
-                                val activeTrackStart = 0f
-                                val activeTrackEnd =
-                                    size.width * sliderState.coercedValueAsFraction -
-                                        ThumbTrackGapSize.toPx()
-                                val inactiveTrackStart =
-                                    activeTrackEnd + ThumbTrackGapSize.toPx() * 2
-                                val inactiveTrackEnd = size.width
-
-                                val activeTrackWidth = activeTrackEnd - activeTrackStart
-                                val inactiveTrackWidth = inactiveTrackEnd - inactiveTrackStart
-
-                                if (
-                                    iconSize.toSize().width <
-                                        inactiveTrackWidth - IconPadding.toPx() * 2
-                                ) {
-                                    showIconActive = false
-                                    trackIcon(
-                                        Offset(inactiveTrackEnd, yOffset),
-                                        inactiveIconColor,
-                                        iconInactiveAlphaAnimatable.value,
-                                    )
-                                } else if (
-                                    iconSize.toSize().width <
-                                        activeTrackWidth - IconPadding.toPx() * 2
-                                ) {
-                                    showIconActive = true
-                                    trackIcon(
-                                        Offset(activeTrackEnd, yOffset),
-                                        activeIconColor,
-                                        iconActiveAlphaAnimatable.value,
-                                    )
+                    SliderDefaults.Track(
+                        sliderState = sliderState,
+                        modifier =
+                            Modifier.motionTestValues {
+                                    iconActiveAlphaAnimatable.value exportAs
+                                        BrightnessSliderMotionTestKeys.ActiveIconAlpha
+                                    iconInactiveAlphaAnimatable.value exportAs
+                                        BrightnessSliderMotionTestKeys.InactiveIconAlpha
                                 }
-                            },
-                    trackCornerSize = SliderTrackRoundedCorner,
-                    trackInsideCornerSize = 2.dp,
-                    drawStopIndicator = null,
-                    thumbTrackGapSize = ThumbTrackGapSize,
-                    colors = colors,
-                )
-            },
-    )
+                                .height(dimensions.trackHeight)
+                                .drawWithContent {
+                                    drawContent()
+
+                                    val yOffset = size.height / 2 - iconSize.toSize().height / 2
+                                    val activeTrackStart = 0f
+                                    val activeTrackEnd =
+                                        size.width * sliderState.coercedValueAsFraction -
+                                            ThumbTrackGapSize.toPx()
+                                    val inactiveTrackStart =
+                                        activeTrackEnd + ThumbTrackGapSize.toPx() * 2
+                                    val inactiveTrackEnd = size.width
+
+                                    val activeTrackWidth = activeTrackEnd - activeTrackStart
+                                    val inactiveTrackWidth = inactiveTrackEnd - inactiveTrackStart
+
+                                    if (
+                                        iconSize.toSize().width <
+                                            inactiveTrackWidth - IconPadding.toPx() * 2
+                                    ) {
+                                        showIconActive = false
+                                        trackIcon(
+                                            Offset(inactiveTrackEnd, yOffset),
+                                            inactiveIconColor,
+                                            iconInactiveAlphaAnimatable.value,
+                                        )
+                                    } else if (
+                                        iconSize.toSize().width <
+                                            activeTrackWidth - IconPadding.toPx() * 2
+                                    ) {
+                                        showIconActive = true
+                                        trackIcon(
+                                            Offset(activeTrackEnd, yOffset),
+                                            activeIconColor,
+                                            iconActiveAlphaAnimatable.value,
+                                        )
+                                    }
+                                },
+                        trackCornerSize = SliderTrackRoundedCorner,
+                        trackInsideCornerSize = 2.dp,
+                        drawStopIndicator = null,
+                        thumbTrackGapSize = ThumbTrackGapSize,
+                        colors = colors,
+                    )
+                },
+        )
+    }
 
     val currentShowToast by rememberUpdatedState(showToast)
     // Showing the warning toast if the current running app window has controlled the

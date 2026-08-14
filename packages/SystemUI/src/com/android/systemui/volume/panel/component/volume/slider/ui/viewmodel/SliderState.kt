@@ -40,6 +40,8 @@ sealed interface SliderState {
     val a11yContentDescription: String
     val disabledMessage: String?
     val isMutable: Boolean
+    val isMuted: Boolean
+        get() = false
 
     data object Empty : SliderState {
         override val value: Float = 0f

@@ -365,7 +365,13 @@ fun ContentScope.Tile(
                             },
                         modifier = contentRevealModifier,
                     ) {
-                        val iconProvider: Context.() -> Icon = { getTileIcon(icon = icon) }
+                        val fluentIconRes =
+                            fluentPlatformIconRes(tile.spec, uiState.visualState).takeIf {
+                                presentation == TilePresentation.FluentCompact
+                            }
+                        val iconProvider: Context.() -> Icon = {
+                            getTileIcon(icon = icon, overrideRes = fluentIconRes)
+                        }
                         if (presentation == TilePresentation.FluentCompact && !iconOnly) {
                             val iconShape by TileDefaults.animateIconShapeAsState(uiState)
                             val secondaryClick: (() -> Unit)? =
@@ -389,8 +395,9 @@ fun ContentScope.Tile(
                                 squishiness = squishiness,
                                 isVisible = isVisible,
                                 textScale = { currentBounceableInfo.bounceable.textBounceScale },
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
                                 showLabels = false,
+                                showChevron = isDualTarget,
                             )
                         } else if (iconOnly) {
                             SmallTileContent(
@@ -570,7 +577,10 @@ fun LargeStaticTile(
     }
 }
 
-private fun Context.getTileIcon(icon: IconProvider): Icon {
+private fun Context.getTileIcon(icon: IconProvider, overrideRes: Int? = null): Icon {
+    overrideRes?.let {
+        return Icon.Resource(it, null)
+    }
     return icon.icon?.let {
         if (it is QSTileImpl.ResourceIcon) {
             Icon.Resource(it.resId, null)
@@ -578,6 +588,26 @@ private fun Context.getTileIcon(icon: IconProvider): Icon {
             Icon.Loaded(it.getDrawable(this), null)
         }
     } ?: Icon.Resource(R.drawable.ic_error_outline, null)
+}
+
+private fun fluentPlatformIconRes(spec: TileSpec, visualState: Int): Int? {
+    val platformSpec = (spec as? TileSpec.PlatformTileSpec)?.spec ?: return null
+    val isActive = visualState == STATE_ACTIVE
+    return when (platformSpec) {
+        "wifi" ->
+            if (isActive) R.drawable.ic_fluent_wifi_4_24_regular
+            else R.drawable.ic_fluent_wifi_off_24_regular
+        "bt" ->
+            if (isActive) R.drawable.ic_fluent_bluetooth_24_regular
+            else R.drawable.ic_fluent_bluetooth_disabled_24_regular
+        "cell" ->
+            if (isActive) R.drawable.ic_fluent_cellular_data_1_24_regular
+            else R.drawable.ic_fluent_cellular_off_24_regular
+        "cast" -> R.drawable.ic_fluent_cast_24_regular
+        "modes" -> R.drawable.ic_fluent_prohibited_24_regular
+        "wallet" -> R.drawable.ic_fluent_wallet_credit_card_24_regular
+        else -> null
+    }
 }
 
 @Composable
@@ -704,7 +734,7 @@ private object TileDefaults {
             label = onSurfaceVariantColor,
             secondaryLabel = onSurfaceVariantColor,
             icon = onSurfaceVariantColor,
-            border = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .5f),
+            border = MaterialTheme.colorScheme.outlineVariant,
         )
     }
 

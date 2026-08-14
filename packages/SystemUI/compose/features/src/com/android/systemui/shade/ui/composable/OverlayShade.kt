@@ -55,7 +55,7 @@ import com.android.mechanics.compose.modifier.motionDriver
 import com.android.systemui.qs.ui.composable.TileRevealFlag
 import com.android.systemui.res.R
 import com.android.systemui.scene.ui.composable.LocalSceneContainerPreloadedResources
-import com.android.systemui.shade.ui.ShadeColors.shadePanel
+import com.android.systemui.shade.ui.ShadeColors.quickSettingsAcrylic
 import com.android.systemui.shade.ui.ShadeColors.shadePanelScrimBehind
 import com.android.systemui.shade.ui.composable.OverlayShade.Colors
 import com.android.systemui.shade.ui.composable.OverlayShade.Dimensions
@@ -240,10 +240,9 @@ object OverlayShade {
         @ReadOnlyComposable
         fun panelBackground(transparencyEnabled: Boolean): Color {
             return Color(
-                shadePanel(
+                quickSettingsAcrylic(
                     context = LocalContext.current,
                     blurSupported = transparencyEnabled,
-                    withScrim = false,
                 )
             )
         }

@@ -38,7 +38,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.overscroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -240,12 +239,7 @@ private fun ContentScope.QuickSettingsScene(
     ) {
         // This is the background for the whole scene, as the elements don't necessarily provide
         // a background that extends to the edges.
-        ShadePanelScrim(
-            isTransparencyEnabled = viewModel.isTransparencyEnabled,
-            backgroundColor =
-                if (viewModel.isTransparencyEnabled) MaterialTheme.colorScheme.surfaceDim
-                else MaterialTheme.colorScheme.surface,
-        )
+        ShadePanelScrim(isTransparencyEnabled = viewModel.isTransparencyEnabled)
 
         val sceneState =
             rememberMutableSceneTransitionLayoutState(

@@ -34,7 +34,6 @@ import android.widget.FrameLayout
 import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
@@ -47,9 +46,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -77,6 +79,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
@@ -282,7 +285,6 @@ constructor(
                     Box(
                         modifier =
                             modifier
-                                .background(MaterialTheme.colorScheme.surfaceDim)
                                 .layout { measurable, constraints ->
                                     measurable.measure(constraints).run {
                                         layout(width, height) {
@@ -793,9 +795,11 @@ constructor(
         val qsExtraPadding = dimensionResource(R.dimen.qs_panel_padding_top)
         Column(
             modifier =
-                modifier.collapseExpandSemanticAction(
-                    stringResource(id = R.string.accessibility_quick_settings_collapse)
-                )
+                modifier
+                    .fillMaxSize()
+                    .collapseExpandSemanticAction(
+                        stringResource(id = R.string.accessibility_quick_settings_collapse)
+                    )
         ) {
             if (viewModel.isQsEnabled) {
                 Element(Elements.QuickSettingsContent, modifier = Modifier.weight(1f)) {
@@ -923,6 +927,28 @@ constructor(
                                                 inactiveTrackColor =
                                                     MaterialTheme.colorScheme.surfaceContainer
                                             ),
+                                        button = {
+                                            IconButton(
+                                                onClick =
+                                                    viewModel.containerViewModel::
+                                                        onVolumeSettingsClicked,
+                                                modifier =
+                                                    Modifier.align(Alignment.CenterVertically)
+                                                        .size(48.dp),
+                                            ) {
+                                                Icon(
+                                                    painter =
+                                                        painterResource(
+                                                            R.drawable.ic_fluent_options_24_regular
+                                                        ),
+                                                    contentDescription =
+                                                        stringResource(
+                                                            R.string.accessibility_volume_settings
+                                                        ),
+                                                    tint = MaterialTheme.colorScheme.onSurface,
+                                                )
+                                            }
+                                        },
                                     )
                                 }
                             }
@@ -974,8 +1000,8 @@ constructor(
                                     .sysuiResTag(ResIdTags.quickSettingsPanel)
                                     .padding(
                                         top = QuickSettingsShade.Dimensions.VerticalPadding,
-                                        start = qsHorizontalMargin(),
-                                        end = qsHorizontalMargin(),
+                                        start = qsHorizontalMargin() + 8.dp,
+                                        end = qsHorizontalMargin() + 8.dp,
                                     )
                         ) {
                             QuickSettingsLayout(
@@ -998,7 +1024,10 @@ constructor(
                         Elements.FooterActions,
                         Modifier.sysuiResTag(ResIdTags.qsFooterActions),
                     ) {
-                        FooterActions(viewModel = viewModel.footerActionsViewModel)
+                        FooterActions(
+                            viewModel = viewModel.footerActionsViewModel,
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                        )
                     }
                 }
             }

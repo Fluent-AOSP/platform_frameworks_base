@@ -130,11 +130,17 @@ fun LargeTileContent(
     toggleClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
     showLabels: Boolean = true,
+    showChevron: Boolean = false,
 ) {
     val isDualTarget = toggleClick != null
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = if (showLabels) tileHorizontalArrangement() else Arrangement.Center,
+        horizontalArrangement =
+            when {
+                showLabels -> tileHorizontalArrangement()
+                showChevron && isDualTarget -> Arrangement.SpaceBetween
+                else -> Arrangement.Center
+            },
         modifier = modifier,
     ) {
         // Icon
@@ -144,7 +150,9 @@ fun LargeTileContent(
         val focusBorderColor = MaterialTheme.colorScheme.secondary
         Box(
             modifier =
-                Modifier.size(CommonTileDefaults.ToggleTargetSize).thenIf(isDualTarget) {
+                Modifier.size(CommonTileDefaults.ToggleTargetSize).thenIf(
+                    isDualTarget && !showChevron
+                ) {
                     Modifier.borderOnFocus(color = focusBorderColor, iconShape.topEnd)
                         .clip(iconShape)
                         .drawBehind { drawRect(animatedBackgroundColor) }
@@ -190,7 +198,42 @@ fun LargeTileContent(
             )
         }
 
-        if (sideDrawable != null) {
+        if (showChevron && isDualTarget) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    Modifier.width(1.dp).height(32.dp).drawBehind {
+                        drawRect(colors.icon.copy(alpha = 0.18f))
+                    }
+                )
+                Box(
+                    modifier =
+                        Modifier.size(CommonTileDefaults.ToggleTargetSize)
+                            .clip(iconShape)
+                            .combinedClickable(
+                                onClick = toggleClick!!,
+                                onLongClick = onLongClick,
+                                onLongClickLabel = longPressLabel,
+                                hapticFeedbackEnabled = false,
+                            )
+                            .semantics {
+                                accessibilityUiState?.let { state ->
+                                    contentDescription = state.contentDescription
+                                    stateDescription = state.stateDescription
+                                    state.toggleableState?.let { toggleableState = it }
+                                }
+                                role = Role.Switch
+                            }
+                            .sysuiResTag(TEST_TAG_TOGGLE),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        icon = Icon.Resource(R.drawable.ic_fluent_chevron_right_24_regular, null),
+                        tint = colors.icon,
+                        modifier = Modifier.size(CommonTileDefaults.ChevronSize),
+                    )
+                }
+            }
+        } else if (sideDrawable != null) {
             Image(
                 painter = rememberDrawablePainter(sideDrawable),
                 contentDescription = null,

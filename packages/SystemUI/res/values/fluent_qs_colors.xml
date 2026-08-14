@@ -20,21 +20,33 @@
     <color name="fluent_qs_on_accent_light">#FFFFFFFF</color>
     <color name="fluent_qs_accent_dark">#FF60CDFF</color>
     <color name="fluent_qs_on_accent_dark">#FF000000</color>
+    <!-- Source vectors use this name; Compose applies semantic tile tint at render time. -->
+    <color name="fluent_default_icon_tint">#FF000000</color>
 
-    <!-- Translucent control layers reveal the platform-owned shade blur beneath them. -->
+    <!--
+      WinUI control resources, preserved in #AARRGGBB form. These match
+      ControlFillColorDefault/Secondary/Disabled and ControlStrokeColorDefault.
+    -->
     <color name="fluent_qs_control_fill_light">#B3FFFFFF</color>
-    <color name="fluent_qs_control_fill_secondary_light">#8FFFFFFF</color>
-    <color name="fluent_qs_control_fill_disabled_light">#59FFFFFF</color>
-    <color name="fluent_qs_control_stroke_light">#29000000</color>
-    <color name="fluent_qs_control_fill_dark">#14FFFFFF</color>
-    <color name="fluent_qs_control_fill_secondary_dark">#0FFFFFFF</color>
-    <color name="fluent_qs_control_fill_disabled_dark">#08FFFFFF</color>
-    <color name="fluent_qs_control_stroke_dark">#24FFFFFF</color>
+    <color name="fluent_qs_control_fill_secondary_light">#80F9F9F9</color>
+    <color name="fluent_qs_control_fill_disabled_light">#4DF9F9F9</color>
+    <color name="fluent_qs_control_stroke_light">#0F000000</color>
+    <color name="fluent_qs_control_fill_dark">#0FFFFFFF</color>
+    <color name="fluent_qs_control_fill_secondary_dark">#15FFFFFF</color>
+    <color name="fluent_qs_control_fill_disabled_dark">#0BFFFFFF</color>
+    <color name="fluent_qs_control_stroke_dark">#12FFFFFF</color>
+
+    <!--
+      Android's compositor owns the blur. This translucent tint approximates WinUI's dark
+      transient Acrylic #2C2C2C recipe without turning the shade into an opaque Mica layer.
+    -->
+    <color name="fluent_qs_acrylic_tint_light">#B8FCFCFC</color>
+    <color name="fluent_qs_acrylic_tint_dark">#992C2C2C</color>
 
     <!-- Solid controls are used when the shade blur feature is unavailable. -->
     <color name="fluent_qs_control_fill_opaque_light">#FFFFFFFF</color>
     <color name="fluent_qs_control_fill_secondary_opaque_light">#FFF9F9F9</color>
-    <color name="fluent_qs_control_fill_disabled_opaque_light">#FFE8E8E8</color>
+    <color name="fluent_qs_control_fill_disabled_opaque_light">#FFEDEDED</color>
     <color name="fluent_qs_control_fill_opaque_dark">#FF2D2D2D</color>
     <color name="fluent_qs_control_fill_secondary_opaque_dark">#FF292929</color>
     <color name="fluent_qs_control_fill_disabled_opaque_dark">#FF252525</color>
@@ -42,8 +54,8 @@
     <!-- Solid roles are the no-blur/reduced-transparency fallback. -->
     <color name="fluent_qs_surface_opaque_light">#FFF3F3F3</color>
     <color name="fluent_qs_surface_opaque_dark">#FF202020</color>
-    <color name="fluent_qs_panel_tint_light">#CCF3F3F3</color>
-    <color name="fluent_qs_panel_tint_dark">#CC202020</color>
+    <color name="fluent_qs_panel_tint_light">#B8F3F3F3</color>
+    <color name="fluent_qs_panel_tint_dark">#B8202020</color>
     <color name="fluent_qs_tooltip_light">#FF202020</color>
     <color name="fluent_qs_on_tooltip_light">#FFFFFFFF</color>
     <color name="fluent_qs_tooltip_dark">#FFF3F3F3</color>
@@ -57,4 +69,5 @@
     <color name="fluent_qs_control_fill_disabled">@color/fluent_qs_control_fill_disabled_light</color>
     <color name="fluent_qs_control_stroke">@color/fluent_qs_control_stroke_light</color>
     <color name="fluent_qs_surface_opaque">@color/fluent_qs_surface_opaque_light</color>
+    <color name="fluent_qs_acrylic_tint">@color/fluent_qs_acrylic_tint_light</color>
 </resources>

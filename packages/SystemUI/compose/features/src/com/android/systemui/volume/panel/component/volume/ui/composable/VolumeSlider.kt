@@ -33,6 +33,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon as MaterialIcon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
@@ -48,9 +49,13 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.android.compose.PlatformSliderColors
 import com.android.systemui.common.shared.colors.SystemUISliderColors
+import com.android.systemui.common.shared.model.ContentDescription
+import com.android.systemui.common.shared.model.Icon as SysuiIcon
 import com.android.systemui.common.ui.compose.Icon
 import com.android.systemui.compose.modifiers.sysuiResTag
 import com.android.systemui.haptics.slider.compose.ui.SliderHapticsViewModel
+import com.android.systemui.qs.ui.compose.FluentQuickSettingsSliderThumb
+import com.android.systemui.qs.ui.compose.FluentQuickSettingsSliderTrack
 import com.android.systemui.qs.ui.compose.borderOnFocus
 import com.android.systemui.res.R
 import com.android.systemui.volume.dialog.sliders.ui.compose.SliderTrack
@@ -96,7 +101,8 @@ fun VolumeSlider(
             )
         }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement =
+                Arrangement.spacedBy(if (dimensions.useFluentStyle) 0.dp else 8.dp),
             modifier = Modifier.fillMaxWidth().padding(vertical = dimensions.verticalPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -104,6 +110,40 @@ fun VolumeSlider(
                 // reserve the space for the slider to avoid excess resizing
                 Spacer(modifier = Modifier.weight(1f).height(dimensions.thumbHeight))
             } else {
+                val fluentFraction =
+                    ((state.value - state.valueRange.start) /
+                            (state.valueRange.endInclusive - state.valueRange.start))
+                        .coerceIn(0f, 1f)
+                val fluentVolumeIcon =
+                    SysuiIcon.Resource(
+                        when {
+                            state.isMuted || fluentFraction <= 0f ->
+                                R.drawable.ic_fluent_speaker_mute_24_regular
+                            fluentFraction < 0.34f -> R.drawable.ic_fluent_speaker_0_24_regular
+                            fluentFraction < 0.67f -> R.drawable.ic_fluent_speaker_1_24_regular
+                            else -> R.drawable.ic_fluent_speaker_2_24_regular
+                        },
+                        ContentDescription.Loaded(
+                            state.a11yClickDescription ?: state.a11yContentDescription
+                        ),
+                    )
+                if (dimensions.useFluentStyle) {
+                    IconButton(
+                        onClick = onIconTapped,
+                        enabled = state.isEnabled,
+                        modifier = Modifier.align(Alignment.CenterVertically).size(48.dp),
+                    ) {
+                        Icon(
+                            icon = fluentVolumeIcon,
+                            tint =
+                                if (state.isEnabled) MaterialTheme.colorScheme.onSurface
+                                else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                            modifier =
+                                Modifier.size(dimensions.iconSize)
+                                    .testTag(VolumeSlidersMotionTestKeys.ACTIVE_ICON_TAG),
+                        )
+                    }
+                }
                 Slider(
                     value = state.value,
                     valueRange = state.valueRange,
@@ -118,62 +158,86 @@ fun VolumeSlider(
                             stateDescription = state.a11yStateDescription,
                         ),
                     track = { sliderState ->
-                        SliderTrack(
-                            sliderState = sliderState,
-                            colors = materialSliderColors,
-                            isEnabled = state.isEnabled,
-                            trackSize = dimensions.trackHeight,
-                            activeTrackEndIcon =
-                                state.icon?.let { icon ->
-                                    { iconsState ->
-                                        SliderIcon(
-                                            icon = {
-                                                Icon(
-                                                    icon = icon,
-                                                    tint = null,
-                                                    modifier =
-                                                        Modifier.size(dimensions.iconSize)
-                                                            .testTag(
-                                                                VolumeSlidersMotionTestKeys
-                                                                    .ACTIVE_ICON_TAG
-                                                            ),
-                                                )
-                                            },
-                                            isVisible = !iconsState.isInactiveTrackEndIconVisible,
-                                        )
-                                    }
-                                },
-                            inactiveTrackEndIcon =
-                                state.icon?.let { icon ->
-                                    { iconsState ->
-                                        SliderIcon(
-                                            icon = {
-                                                Icon(
-                                                    icon = icon,
-                                                    tint = null,
-                                                    modifier =
-                                                        Modifier.size(dimensions.iconSize)
-                                                            .testTag(
-                                                                VolumeSlidersMotionTestKeys
-                                                                    .INACTIVE_ICON_TAG
-                                                            ),
-                                                )
-                                            },
-                                            isVisible = iconsState.isInactiveTrackEndIconVisible,
-                                        )
-                                    }
-                                },
-                            trackCornerSize = SliderTrackRoundedCorner,
-                        )
+                        if (dimensions.useFluentStyle) {
+                            FluentQuickSettingsSliderTrack(
+                                fraction = sliderState.coercedValueAsFraction,
+                                enabled = state.isEnabled,
+                                activeColor =
+                                    if (state.isEnabled) materialSliderColors.activeTrackColor
+                                    else materialSliderColors.disabledActiveTrackColor,
+                                inactiveColor =
+                                    if (state.isEnabled) materialSliderColors.inactiveTrackColor
+                                    else materialSliderColors.disabledInactiveTrackColor,
+                                modifier = Modifier.height(dimensions.trackHeight),
+                            )
+                        } else {
+                            SliderTrack(
+                                sliderState = sliderState,
+                                colors = materialSliderColors,
+                                isEnabled = state.isEnabled,
+                                trackSize = dimensions.trackHeight,
+                                activeTrackEndIcon =
+                                    state.icon?.let { icon ->
+                                        { iconsState ->
+                                            SliderIcon(
+                                                icon = {
+                                                    Icon(
+                                                        icon = icon,
+                                                        tint = null,
+                                                        modifier =
+                                                            Modifier.size(dimensions.iconSize)
+                                                                .testTag(
+                                                                    VolumeSlidersMotionTestKeys
+                                                                        .ACTIVE_ICON_TAG
+                                                                ),
+                                                    )
+                                                },
+                                                isVisible =
+                                                    !iconsState.isInactiveTrackEndIconVisible,
+                                            )
+                                        }
+                                    },
+                                inactiveTrackEndIcon =
+                                    state.icon?.let { icon ->
+                                        { iconsState ->
+                                            SliderIcon(
+                                                icon = {
+                                                    Icon(
+                                                        icon = icon,
+                                                        tint = null,
+                                                        modifier =
+                                                            Modifier.size(dimensions.iconSize)
+                                                                .testTag(
+                                                                    VolumeSlidersMotionTestKeys
+                                                                        .INACTIVE_ICON_TAG
+                                                                ),
+                                                    )
+                                                },
+                                                isVisible = iconsState.isInactiveTrackEndIconVisible,
+                                            )
+                                        }
+                                    },
+                                trackCornerSize = SliderTrackRoundedCorner,
+                            )
+                        }
                     },
                     thumb = { sliderState, interactionSource ->
-                        SliderDefaults.Thumb(
-                            sliderState = sliderState,
-                            interactionSource = interactionSource,
-                            enabled = state.isEnabled,
-                            colors = materialSliderColors,
-                            thumbSize = DpSize(dimensions.thumbWidth, dimensions.thumbHeight),
-                        )
+                        if (dimensions.useFluentStyle) {
+                            FluentQuickSettingsSliderThumb(
+                                enabled = state.isEnabled,
+                                accentColor = materialSliderColors.activeTrackColor,
+                                surfaceColor = MaterialTheme.colorScheme.surface,
+                                outlineColor = MaterialTheme.colorScheme.outlineVariant,
+                            )
+                        } else {
+                            SliderDefaults.Thumb(
+                                sliderState = sliderState,
+                                interactionSource = interactionSource,
+                                enabled = state.isEnabled,
+                                colors = materialSliderColors,
+                                thumbSize = DpSize(dimensions.thumbWidth, dimensions.thumbHeight),
+                            )
+                        }
                     },
                     haptics =
                         hapticsViewModelFactory?.let {
@@ -236,6 +300,7 @@ data class VolumeSliderDimensions(
     val thumbWidth: Dp,
     val trackHeight: Dp,
     val verticalPadding: Dp,
+    val useFluentStyle: Boolean = false,
 ) {
     companion object {
         val Defaults =

@@ -25,20 +25,17 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -453,50 +450,38 @@ private fun ContentScope.QuickSettingsLayout(
                         )
                         .sysuiResTag("volume_slider")
                 ) {
-                    Row(
+                    VolumeSlider(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        VolumeSlider(
-                            modifier = Modifier.weight(1f),
-                            showLabel = false,
-                            state = volumeSliderState,
-                            onValueChange = { newValue: Float ->
-                                volumeSliderViewModel.onValueChanged(volumeSliderState, newValue)
-                            },
-                            onValueChangeFinished = {
-                                volumeSliderViewModel.onValueChangeFinished()
-                            },
-                            onIconTapped = { volumeSliderViewModel.toggleMuted(volumeSliderState) },
-                            sliderColors = PlatformSliderDefaults.defaultPlatformSliderColors(),
-                            hapticsViewModelFactory =
-                                volumeSliderViewModel.getSliderHapticsViewModelFactory(),
-                            dimensions = QuickSettingsShade.Dimensions.VolumeSliderDimensions,
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        IconButton(
-                            modifier =
-                                Modifier.size(
-                                    QuickSettingsShade.Dimensions.VolumeSliderDimensions.trackHeight
-                                ),
-                            colors =
-                                IconButtonDefaults.iconButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                                ),
-                            onClick = {
-                                qsContainerViewModel.detailsViewModel.onVolumeSettingsButtonClicked(
-                                    audioDetailsViewModelFactory.create()
+                        showLabel = false,
+                        state = volumeSliderState,
+                        onValueChange = { newValue: Float ->
+                            volumeSliderViewModel.onValueChanged(volumeSliderState, newValue)
+                        },
+                        onValueChangeFinished = { volumeSliderViewModel.onValueChangeFinished() },
+                        onIconTapped = { volumeSliderViewModel.toggleMuted(volumeSliderState) },
+                        sliderColors = PlatformSliderDefaults.defaultPlatformSliderColors(),
+                        hapticsViewModelFactory =
+                            volumeSliderViewModel.getSliderHapticsViewModelFactory(),
+                        dimensions = QuickSettingsShade.Dimensions.VolumeSliderDimensions,
+                        button = {
+                            IconButton(
+                                modifier = Modifier.align(Alignment.CenterVertically).size(48.dp),
+                                onClick = {
+                                    qsContainerViewModel.detailsViewModel
+                                        .onVolumeSettingsButtonClicked(
+                                            audioDetailsViewModelFactory.create()
+                                        )
+                                },
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.ic_fluent_options_24_regular),
+                                    contentDescription =
+                                        stringResource(R.string.accessibility_volume_settings),
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
-                            },
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.ic_more_vert),
-                                // TODO(b/378513663): Update the placeholder content description
-                                contentDescription = "Volume settings",
-                            )
-                        }
-                    }
+                            }
+                        },
+                    )
                 }
             }
 
@@ -570,6 +555,7 @@ object QuickSettingsShade {
                     volumeThumbWidth,
                     volumeTrackHeight,
                     volumeVerticalPadding,
+                    useFluentStyle = true,
                 )
 
         val ToolbarBottomPadding: Dp

@@ -49,7 +49,6 @@ import com.android.app.displaylib.PerDisplayRepository
 import com.android.compose.theme.PlatformTheme
 import com.android.keyguard.AlphaOptimizedLinearLayout
 import com.android.systemui.Dumpable
-import com.android.systemui.Flags
 import com.android.systemui.Flags.notificationShadeBlur
 import com.android.systemui.animation.ShadeInterpolation
 import com.android.systemui.battery.BatteryMeterView.MODE_ESTIMATE
@@ -406,6 +405,7 @@ constructor(
                                 Color(context.getColor(R.color.shade_header_text_color))
                             else Color.White,
                         showEstimate = showBatteryEstimate,
+                        useFluentIcon = true,
                     )
                 }
             }

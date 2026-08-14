@@ -255,11 +255,13 @@ fun FooterActions(viewModel: FooterActionsViewModel, modifier: Modifier = Modifi
                 { settings },
                 useModifierBasedExpandable,
                 Modifier.sysuiResTag("settings_button_container"),
+                overrideIconRes = R.drawable.ic_fluent_settings_24_regular,
             )
             IconButton(
                 { viewModel.power },
                 useModifierBasedExpandable,
                 Modifier.sysuiResTag("pm_lite"),
+                overrideIconRes = R.drawable.ic_fluent_power_24_regular,
             )
         }
     }
@@ -371,9 +373,10 @@ private fun IconButton(
     model: () -> FooterActionsButtonViewModel?,
     useModifierBasedExpandable: Boolean,
     modifier: Modifier = Modifier,
+    overrideIconRes: Int? = null,
 ) {
     val viewModel = model() ?: return
-    IconButton(viewModel, useModifierBasedExpandable, modifier)
+    IconButton(viewModel, useModifierBasedExpandable, modifier, overrideIconRes)
 }
 
 /** A button with an icon. */
@@ -382,6 +385,7 @@ private fun IconButton(
     model: FooterActionsButtonViewModel,
     useModifierBasedExpandable: Boolean,
     modifier: Modifier = Modifier,
+    overrideIconRes: Int? = null,
 ) {
     val colors = buttonColorsForModel(model)
     FooterExpandable(
@@ -391,14 +395,23 @@ private fun IconButton(
         modifier = modifier,
         useModifierBasedImplementation = useModifierBasedExpandable,
     ) {
-        FooterIcon(model.icon, Modifier.size(20.dp), colors.icon)
+        FooterIcon(model.icon, Modifier.size(20.dp), colors.icon, overrideIconRes)
     }
 }
 
 // TODO(b/394738023): Use com.android.systemui.common.ui.compose.Icon instead
 @Composable
-private fun FooterIcon(icon: Icon, modifier: Modifier = Modifier, tint: Color) {
+private fun FooterIcon(
+    icon: Icon,
+    modifier: Modifier = Modifier,
+    tint: Color,
+    overrideIconRes: Int? = null,
+) {
     val contentDescription = icon.contentDescription?.load()
+    if (overrideIconRes != null) {
+        Icon(painterResource(overrideIconRes), contentDescription, modifier, tint)
+        return
+    }
     when (icon) {
         is Icon.Loaded -> {
             Icon(icon.drawable.toBitmap().asImageBitmap(), contentDescription, modifier, tint)

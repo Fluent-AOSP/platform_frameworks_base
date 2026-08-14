@@ -52,10 +52,9 @@ private fun scrimColor(isTransparencyEnabled: Boolean): Color {
     // Read configuration to invalidate on changes
     LocalConfiguration.current
     return Color(
-        ShadeColors.shadePanel(
+        ShadeColors.quickSettingsAcrylic(
             context = LocalContext.current,
             blurSupported = isTransparencyEnabled,
-            withScrim = true,
         )
     )
 }
