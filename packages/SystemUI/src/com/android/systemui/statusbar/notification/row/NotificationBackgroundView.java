@@ -77,6 +77,8 @@ public class NotificationBackgroundView extends View implements Dumpable,
     private int mDrawableAlpha = 255;
     private final ColorStateList mLightColoredStatefulColors;
     private final ColorStateList mDarkColoredStatefulColors;
+    private final boolean mUseFluentNotificationCards;
+    private final int mFluentOpaqueColor;
     private int mNormalColor;
     private final int convexR = 9;
     private final int concaveR = 22;
@@ -95,7 +97,19 @@ public class NotificationBackgroundView extends View implements Dumpable,
                 R.color.notification_state_color_light);
         mDarkColoredStatefulColors = getResources().getColorStateList(
                 R.color.notification_state_color_dark);
-        if (notificationRowTransparency()) {
+        mUseFluentNotificationCards =
+                getResources().getBoolean(R.bool.config_use_fluent_notification_cards);
+        mFluentOpaqueColor =
+                mUseFluentNotificationCards
+                        ? mContext.getColor(R.color.fluent_notification_card_opaque)
+                        : 0;
+        if (mUseFluentNotificationCards) {
+            mNormalColor =
+                    mContext.getColor(
+                            notificationRowTransparency()
+                                    ? R.color.fluent_notification_card_translucent
+                                    : R.color.fluent_notification_card_opaque);
+        } else if (notificationRowTransparency()) {
             mNormalColor = SurfaceEffectColors.surfaceEffect1(getContext());
         } else  {
             mNormalColor = mContext.getColor(
@@ -288,10 +302,15 @@ public class NotificationBackgroundView extends View implements Dumpable,
         if (statefulLayer == null) {
             return;
         }
-        if (mTintColor != mNormalColor) {
+        final GradientDrawable gradientDrawable = (GradientDrawable) statefulLayer.mutate();
+        if (mUseFluentNotificationCards
+                && (mTintColor == mNormalColor || mTintColor == mFluentOpaqueColor)) {
+            gradientDrawable.setColor(
+                    mContext.getColorStateList(R.color.fluent_notification_card_state));
+        } else if (mTintColor != mNormalColor) {
             ColorStateList newColor = ContrastColorUtil.isColorDark(mTintColor)
                     ? mDarkColoredStatefulColors : mLightColoredStatefulColors;
-            ((GradientDrawable) statefulLayer.mutate()).setColor(newColor);
+            gradientDrawable.setColor(newColor);
         }
     }
 
@@ -386,7 +405,8 @@ public class NotificationBackgroundView extends View implements Dumpable,
         return ((LayerDrawable) mBackground).getDrawable(0);
     }
 
-    private Drawable getStatefulBackgroundLayer() {
+    @VisibleForTesting
+    Drawable getStatefulBackgroundLayer() {
         return ((LayerDrawable) mBackground).getDrawable(1);
     }
 

@@ -190,6 +190,84 @@ class QuickSettingsTokenTest : SysuiTestCase() {
     }
 
     @Test
+    fun fluentShellRestingSurfaces_shareFillAndStrokeRoles() {
+        assertThat(color(R.color.fluent_qs_tile_fill_light))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_translucent_light))
+        assertThat(color(R.color.fluent_qs_tile_fill_dark))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_translucent_dark))
+        assertThat(color(R.color.fluent_notification_card_translucent_light))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_translucent_light))
+        assertThat(color(R.color.fluent_notification_card_translucent_dark))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_translucent_dark))
+        assertThat(color(R.color.fluent_qs_tile_fill_opaque_light))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_opaque_light))
+        assertThat(color(R.color.fluent_qs_tile_fill_opaque_dark))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_opaque_dark))
+        assertThat(color(R.color.fluent_notification_card_opaque_light))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_opaque_light))
+        assertThat(color(R.color.fluent_notification_card_opaque_dark))
+            .isEqualTo(color(R.color.fluent_shell_card_fill_opaque_dark))
+        assertThat(color(R.color.fluent_qs_tile_stroke_light))
+            .isEqualTo(color(R.color.fluent_shell_card_stroke_light))
+        assertThat(color(R.color.fluent_qs_tile_stroke_dark))
+            .isEqualTo(color(R.color.fluent_shell_card_stroke_dark))
+        assertThat(color(R.color.fluent_notification_card_stroke_light))
+            .isEqualTo(color(R.color.fluent_shell_card_stroke_light))
+        assertThat(color(R.color.fluent_notification_card_stroke_dark))
+            .isEqualTo(color(R.color.fluent_shell_card_stroke_dark))
+
+        assertThat(color(R.color.fluent_qs_control_fill_dark))
+            .isNotEqualTo(color(R.color.fluent_qs_tile_fill_dark))
+        assertThat(color(R.color.fluent_qs_control_fill_disabled_dark))
+            .isNotEqualTo(color(R.color.fluent_qs_tile_fill_dark))
+        assertThat(color(R.color.fluent_qs_control_fill_opaque_light))
+            .isNotEqualTo(color(R.color.fluent_qs_tile_fill_opaque_light))
+        assertThat(color(R.color.fluent_qs_control_fill_disabled_opaque_light))
+            .isNotEqualTo(color(R.color.fluent_qs_tile_fill_opaque_light))
+    }
+
+    @Test
+    fun fluentNotificationCards_matchPinnedWinUiCardRoles() {
+        assertThat(context.resources.getBoolean(R.bool.config_use_fluent_notification_cards))
+            .isTrue()
+        assertThat(color(R.color.fluent_notification_card_translucent_light))
+            .isEqualTo(Color.argb(0xEF, 0xFF, 0xFF, 0xFF))
+        assertThat(color(R.color.fluent_notification_card_translucent_dark))
+            .isEqualTo(Color.argb(0xB7, 0x2C, 0x2C, 0x2C))
+        assertThat(color(R.color.fluent_notification_card_opaque_light)).isEqualTo(Color.WHITE)
+        assertThat(color(R.color.fluent_notification_card_opaque_dark))
+            .isEqualTo(Color.rgb(0x2C, 0x2C, 0x2C))
+        assertThat(color(R.color.fluent_notification_card_stroke_light))
+            .isEqualTo(Color.argb(0x0F, 0, 0, 0))
+        assertThat(color(R.color.fluent_notification_card_stroke_dark))
+            .isEqualTo(Color.argb(0x19, 0, 0, 0))
+        assertThat(color(R.color.fluent_notification_card_hover_light))
+            .isEqualTo(Color.argb(0x09, 0, 0, 0))
+        assertThat(color(R.color.fluent_notification_card_hover_dark))
+            .isEqualTo(Color.argb(0x0F, 0xFF, 0xFF, 0xFF))
+        assertThat(color(R.color.fluent_notification_card_pressed_light))
+            .isEqualTo(Color.argb(0x06, 0, 0, 0))
+        assertThat(color(R.color.fluent_notification_card_pressed_dark))
+            .isEqualTo(Color.argb(0x0A, 0xFF, 0xFF, 0xFF))
+
+        val cardState = context.getColorStateList(R.color.fluent_notification_card_state)
+        assertThat(
+                cardState.getColorForState(
+                    intArrayOf(android.R.attr.state_hovered),
+                    Color.TRANSPARENT,
+                )
+            )
+            .isEqualTo(color(R.color.fluent_notification_card_hover))
+        assertThat(
+                cardState.getColorForState(
+                    intArrayOf(android.R.attr.state_pressed),
+                    Color.TRANSPARENT,
+                )
+            )
+            .isEqualTo(color(R.color.fluent_notification_card_pressed))
+    }
+
+    @Test
     fun fluentCollapsedShadePolicy_enabledOnPhoneAndDisabledAtSw600dp() {
         val phoneResources =
             context
@@ -226,6 +304,8 @@ class QuickSettingsTokenTest : SysuiTestCase() {
         assertThat(phoneResources.getBoolean(R.bool.config_use_fluent_compact_qqs)).isTrue()
         assertThat(phoneResources.getBoolean(R.bool.notification_scrim_transparent)).isTrue()
         assertThat(landscapePhoneResources.getBoolean(R.bool.notification_scrim_transparent))
+            .isFalse()
+        assertThat(landscapePhoneResources.getBoolean(R.bool.config_use_fluent_compact_qqs))
             .isFalse()
         assertThat(largeScreenResources.getBoolean(R.bool.config_use_fluent_compact_qqs)).isFalse()
         assertThat(largeScreenResources.getBoolean(R.bool.notification_scrim_transparent)).isFalse()

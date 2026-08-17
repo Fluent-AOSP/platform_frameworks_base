@@ -18,8 +18,10 @@ package com.android.systemui.statusbar.notification.stack;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+import static com.android.systemui.statusbar.notification.stack.NotificationPriorityBucketKt.BUCKET_ALERTING;
 import static com.android.systemui.statusbar.notification.stack.NotificationPriorityBucketKt.BUCKET_FOREGROUND_SERVICE;
 import static com.android.systemui.statusbar.notification.stack.NotificationPriorityBucketKt.BUCKET_HEADS_UP;
+import static com.android.systemui.statusbar.notification.stack.NotificationPriorityBucketKt.BUCKET_NEWS;
 import static com.android.systemui.statusbar.notification.stack.NotificationPriorityBucketKt.BUCKET_SILENT;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -86,6 +88,7 @@ public class NotificationSectionsManagerTest extends SysuiTestCase {
     public void setUp() {
         mSectionsManager =
                 new NotificationSectionsManager(
+                        mContext.getResources(),
                         mConfigurationController,
                         mKeyguardMediaController,
                         mMediaContainerController,
@@ -94,14 +97,81 @@ public class NotificationSectionsManagerTest extends SysuiTestCase {
                         mPeopleHeaderController,
                         mAlertingHeaderController,
                         mSilentHeaderController,
-                        mHighlightsHeaderController
-                );
+                        mHighlightsHeaderController);
         // Required in order for the header inflation to work properly
         when(mNssl.generateLayoutParams(any(AttributeSet.class)))
                 .thenReturn(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         mSectionsManager.initialize(mNssl);
         when(mNssl.indexOfChild(any(View.class))).thenReturn(-1);
         when(mStatusBarStateController.getState()).thenReturn(StatusBarState.SHADE);
+    }
+
+    @Test
+    public void combinedList_silentRowDoesNotBeginVisualSection() {
+        ExpandableNotificationRow alerting =
+                mKosmos.createRow(
+                        mKosmos.buildNotificationEntry(
+                                builder -> {
+                                    builder.setBucket(BUCKET_ALERTING);
+                                    return builder.done();
+                                }));
+        ExpandableNotificationRow silent =
+                mKosmos.createRow(
+                        mKosmos.buildNotificationEntry(
+                                builder -> {
+                                    builder.setBucket(BUCKET_SILENT);
+                                    return builder.done();
+                                }));
+
+        assertThat(silent.getEntryAdapter().getSectionBucket()).isEqualTo(BUCKET_SILENT);
+        assertThat(mSectionsManager.beginsSection(silent, alerting)).isFalse();
+
+        mSectionsManager.updateFirstAndLastViewsForAllSections(List.of(alerting, silent));
+
+        assertThat(alerting.getBottomRoundnessSources())
+                .doesNotContain(NotificationSectionsManager.Companion.getSECTION());
+        assertThat(silent.getTopRoundnessSources())
+                .doesNotContain(NotificationSectionsManager.Companion.getSECTION());
+    }
+
+    @Test
+    public void combinedList_intermediateBucketRetainsOwnSectionBounds() {
+        ExpandableNotificationRow alerting =
+                mKosmos.createRow(
+                        mKosmos.buildNotificationEntry(
+                                builder -> {
+                                    builder.setBucket(BUCKET_ALERTING);
+                                    return builder.done();
+                                }));
+        ExpandableNotificationRow news =
+                mKosmos.createRow(
+                        mKosmos.buildNotificationEntry(
+                                builder -> {
+                                    builder.setBucket(BUCKET_NEWS);
+                                    return builder.done();
+                                }));
+        ExpandableNotificationRow silent =
+                mKosmos.createRow(
+                        mKosmos.buildNotificationEntry(
+                                builder -> {
+                                    builder.setBucket(BUCKET_SILENT);
+                                    return builder.done();
+                                }));
+
+        mSectionsManager.updateFirstAndLastViewsForAllSections(List.of(alerting, silent));
+        assertThat(alerting.getBottomRoundnessSources())
+                .doesNotContain(NotificationSectionsManager.Companion.getSECTION());
+        assertThat(silent.getTopRoundnessSources())
+                .doesNotContain(NotificationSectionsManager.Companion.getSECTION());
+
+        assertThat(mSectionsManager.beginsSection(silent, news)).isTrue();
+
+        mSectionsManager.updateFirstAndLastViewsForAllSections(List.of(alerting, news, silent));
+
+        assertThat(alerting.getBottomRoundnessSources())
+                .contains(NotificationSectionsManager.Companion.getSECTION());
+        assertThat(silent.getTopRoundnessSources())
+                .contains(NotificationSectionsManager.Companion.getSECTION());
     }
 
     @Test(expected = IllegalStateException.class)

@@ -190,7 +190,7 @@ constructor(
 
         LaunchedEffectWithLifecycle(key1 = Unit) { contentViewModel.detectShadeModeChanges() }
 
-        QuickSettingsTheme {
+        QuickSettingsTheme(useTranslucentControls = contentViewModel.isTransparencyEnabled) {
             Box(
                 modifier =
                     modifier

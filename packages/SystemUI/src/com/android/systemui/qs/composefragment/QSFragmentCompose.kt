@@ -157,6 +157,7 @@ import com.android.systemui.qs.ui.composable.QuickSettingsShade.systemGestureExc
 import com.android.systemui.qs.ui.composable.QuickSettingsTheme
 import com.android.systemui.res.R
 import com.android.systemui.shade.ShadeDisplayAware
+import com.android.systemui.statusbar.StatusBarState
 import com.android.systemui.statusbar.policy.ConfigurationController
 import com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener
 import com.android.systemui.util.LifecycleFragment
@@ -279,8 +280,13 @@ constructor(
 
     @Composable
     private fun Content(modifier: Modifier = Modifier) {
-        PlatformTheme(isDarkTheme = if (notificationShadeBlur()) isSystemInDarkTheme() else true) {
-            QuickSettingsTheme {
+        val isBlurSupported by viewModel.isBlurSupported.collectAsStateWithLifecycle()
+        val useTranslucentControls =
+            Flags.notificationRowTransparency() &&
+                isBlurSupported &&
+                viewModel.statusBarState != StatusBarState.KEYGUARD
+        PlatformTheme(isDarkTheme = isSystemInDarkTheme()) {
+            QuickSettingsTheme(useTranslucentControls = useTranslucentControls) {
                 ProvideShortcutHelperIndication(interactionsConfig = interactionsConfig()) {
                     Box(
                         modifier =

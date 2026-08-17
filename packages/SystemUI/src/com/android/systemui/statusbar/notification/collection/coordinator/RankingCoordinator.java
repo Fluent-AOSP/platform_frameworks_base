@@ -19,8 +19,11 @@ package com.android.systemui.statusbar.notification.collection.coordinator;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.NotificationChannel;
+import android.content.res.Resources;
 
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
+import com.android.systemui.res.R;
+import com.android.systemui.shade.ShadeDisplayAware;
 import com.android.systemui.statusbar.notification.collection.BundleEntry;
 import com.android.systemui.statusbar.notification.collection.ListEntry;
 import com.android.systemui.statusbar.notification.collection.NotifPipeline;
@@ -59,6 +62,7 @@ public class RankingCoordinator implements Coordinator {
     private final NodeController mSilentNodeController;
     private final SectionHeaderController mSilentHeaderController;
     private final NodeController mAlertingHeaderController;
+    private final boolean mUseFluentCombinedNotificationList;
     private boolean mHasSilentEntries;
     private boolean mHasMinimizedEntries;
 
@@ -76,11 +80,14 @@ public class RankingCoordinator implements Coordinator {
     public RankingCoordinator(
             StatusBarStateController statusBarStateController,
             HighPriorityProvider highPriorityProvider,
+            @ShadeDisplayAware @NonNull Resources resources,
             @AlertingHeader NodeController alertingHeaderController,
             @SilentHeader SectionHeaderController silentHeaderController,
             @SilentHeader NodeController silentNodeController) {
         mStatusBarStateController = statusBarStateController;
         mHighPriorityProvider = highPriorityProvider;
+        mUseFluentCombinedNotificationList =
+                resources.getBoolean(R.bool.config_use_fluent_combined_notification_list);
         mAlertingHeaderController = alertingHeaderController;
         mSilentNodeController = silentNodeController;
         mSilentHeaderController = silentHeaderController;
@@ -132,136 +139,143 @@ public class RankingCoordinator implements Coordinator {
         }
     };
 
-    private final NotifSectioner mSilentNotifSectioner = new NotifSectioner("Silent",
-            NotificationPriorityBucketKt.BUCKET_SILENT) {
-        @Override
-        public boolean isInSection(PipelineEntry entry) {
-            final ListEntry listEntry = entry.asListEntry();
-            if (listEntry == null) {
-                return entry instanceof BundleEntry;
-            }
-            if (BundleUtil.Companion.isClassified(listEntry)) {
-                return NmContextualDisplay.isEnabled() ? true : false;
-            }
-            return !mHighPriorityProvider.isHighPriority(listEntry)
-                    && listEntry.getRepresentativeEntry() != null
-                    && !listEntry.getRepresentativeEntry().isAmbient();
-        }
+    private final NotifSectioner mSilentNotifSectioner =
+            new NotifSectioner("Silent", NotificationPriorityBucketKt.BUCKET_SILENT) {
+                @Override
+                public boolean isInSection(PipelineEntry entry) {
+                    final ListEntry listEntry = entry.asListEntry();
+                    if (listEntry == null) {
+                        return entry instanceof BundleEntry;
+                    }
+                    if (BundleUtil.Companion.isClassified(listEntry)) {
+                        return NmContextualDisplay.isEnabled() ? true : false;
+                    }
+                    return !mHighPriorityProvider.isHighPriority(listEntry)
+                            && listEntry.getRepresentativeEntry() != null
+                            && !listEntry.getRepresentativeEntry().isAmbient();
+                }
 
-        @Nullable
-        @Override
-        public NodeController getHeaderNodeController() {
-            return mSilentNodeController;
-        }
+                @Nullable
+                @Override
+                public NodeController getHeaderNodeController() {
+                    return mUseFluentCombinedNotificationList ? null : mSilentNodeController;
+                }
 
-        @Override
-        public void onEntriesUpdated(@NonNull List<PipelineEntry> entries) {
-            mHasSilentEntries = false;
-            for (int i = 0; i < entries.size(); i++) {
-                final PipelineEntry pipelineEntry = entries.get(i);
-                final ListEntry listEntry = pipelineEntry.asListEntry();
-                if (listEntry == null) {
-                    if (pipelineEntry instanceof BundleEntry bundleEntry) {
-                        if (bundleEntry.isClearable()) {
+                @Override
+                public void onEntriesUpdated(@NonNull List<PipelineEntry> entries) {
+                    mHasSilentEntries = false;
+                    for (int i = 0; i < entries.size(); i++) {
+                        final PipelineEntry pipelineEntry = entries.get(i);
+                        final ListEntry listEntry = pipelineEntry.asListEntry();
+                        if (listEntry == null) {
+                            if (pipelineEntry instanceof BundleEntry bundleEntry) {
+                                if (bundleEntry.isClearable()) {
+                                    mHasSilentEntries = true;
+                                    break;
+                                }
+                            }
+                            continue;
+                        }
+                        final NotificationEntry notifEntry = listEntry.getRepresentativeEntry();
+                        if (notifEntry == null) {
+                            continue;
+                        }
+                        if (notifEntry.getSbn().isClearable()) {
                             mHasSilentEntries = true;
                             break;
                         }
                     }
-                    continue;
+                    mSilentHeaderController.setClearSectionEnabled(
+                            mHasSilentEntries | mHasMinimizedEntries);
                 }
-                final NotificationEntry notifEntry = listEntry.getRepresentativeEntry();
-                if (notifEntry == null) {
-                    continue;
-                }
-                if (notifEntry.getSbn().isClearable()) {
-                    mHasSilentEntries = true;
-                    break;
-                }
-            }
-            mSilentHeaderController.setClearSectionEnabled(
-                    mHasSilentEntries | mHasMinimizedEntries);
-        }
 
-        private final NotifComparator mSilentSectionComparator = new NotifComparator(
-                "SilentSectionComparator") {
-            @Override
-            public int compare(@NonNull PipelineEntry o1, @NonNull PipelineEntry o2) {
-                boolean isBundle1 = o1 instanceof BundleEntry;
-                boolean isBundle2 = o2 instanceof BundleEntry;
-                if (isBundle1 && isBundle2) {
-                    final String key1 = o1.getKey();
-                    final String key2 = o2.getKey();
-                    // When both are bundles, use the BUNDLE_KEY_SORT_ORDER map to get rankings for
-                    // the keys, which are guaranteed to be in fixed order. Default to large value
-                    // for unknown bundle keys to sort them last.
-                    int rank1 = BUNDLE_KEY_SORT_ORDER.getOrDefault(key1, Integer.MAX_VALUE);
-                    int rank2 = BUNDLE_KEY_SORT_ORDER.getOrDefault(key2, Integer.MAX_VALUE);
-                    int rankComparison = Integer.compare(rank1, rank2);
-                    if (rankComparison != 0) {
-                        return rankComparison;
+                private final NotifComparator mSilentSectionComparator =
+                        new NotifComparator("SilentSectionComparator") {
+                            @Override
+                            public int compare(
+                                    @NonNull PipelineEntry o1, @NonNull PipelineEntry o2) {
+                                boolean isBundle1 = o1 instanceof BundleEntry;
+                                boolean isBundle2 = o2 instanceof BundleEntry;
+                                if (isBundle1 && isBundle2) {
+                                    final String key1 = o1.getKey();
+                                    final String key2 = o2.getKey();
+                                    // When both are bundles, use the BUNDLE_KEY_SORT_ORDER map to
+                                    // get rankings for
+                                    // the keys, which are guaranteed to be in fixed order. Default
+                                    // to large value
+                                    // for unknown bundle keys to sort them last.
+                                    int rank1 =
+                                            BUNDLE_KEY_SORT_ORDER.getOrDefault(
+                                                    key1, Integer.MAX_VALUE);
+                                    int rank2 =
+                                            BUNDLE_KEY_SORT_ORDER.getOrDefault(
+                                                    key2, Integer.MAX_VALUE);
+                                    int rankComparison = Integer.compare(rank1, rank2);
+                                    if (rankComparison != 0) {
+                                        return rankComparison;
+                                    }
+                                    return key1.compareTo(key2);
+                                }
+                                // Order bundles before non-bundles
+                                return -1 * Boolean.compare(isBundle1, isBundle2);
+                            }
+                        };
+
+                @Nullable
+                @Override
+                public NotifComparator getComparator() {
+                    return mSilentSectionComparator;
+                }
+            };
+
+    private final NotifSectioner mMinimizedNotifSectioner =
+            new NotifSectioner("Minimized", NotificationPriorityBucketKt.BUCKET_SILENT) {
+                @Override
+                public boolean isInSection(PipelineEntry entry) {
+                    final ListEntry listEntry = entry.asListEntry();
+                    if (listEntry == null) {
+                        // Bundles are never minimized.
+                        return false;
                     }
-                    return key1.compareTo(key2);
+                    if (BundleUtil.Companion.isClassified(listEntry)) {
+                        return false;
+                    }
+                    return !mHighPriorityProvider.isHighPriority(listEntry)
+                            && listEntry.getRepresentativeEntry() != null
+                            && listEntry.getRepresentativeEntry().isAmbient();
                 }
-                // Order bundles before non-bundles
-                return -1 * Boolean.compare(isBundle1, isBundle2);
-            }
-        };
 
-
-        @Nullable
-        @Override
-        public NotifComparator getComparator() {
-            return mSilentSectionComparator;
-        }
-    };
-
-    private final NotifSectioner mMinimizedNotifSectioner = new NotifSectioner("Minimized",
-            NotificationPriorityBucketKt.BUCKET_SILENT) {
-        @Override
-        public boolean isInSection(PipelineEntry entry) {
-            final ListEntry listEntry = entry.asListEntry();
-            if (listEntry == null) {
-                // Bundles are never minimized.
-                return false;
-            }
-            if (BundleUtil.Companion.isClassified(listEntry)) {
-                return false;
-            }
-            return !mHighPriorityProvider.isHighPriority(listEntry)
-                    && listEntry.getRepresentativeEntry() != null
-                    && listEntry.getRepresentativeEntry().isAmbient();
-        }
-
-        @Nullable
-        @Override
-        public NodeController getHeaderNodeController() {
-            return mSilentNodeController;
-        }
-
-        @Override
-        public void onEntriesUpdated(@NonNull List<PipelineEntry> entries) {
-            mHasMinimizedEntries = false;
-            for (int i = 0; i < entries.size(); i++) {
-                final PipelineEntry pipelineEntry = entries.get(i);
-                final ListEntry listEntry = pipelineEntry.asListEntry();
-                if (listEntry == null) {
-                    // Bundles are never minimized
-                    throw new IllegalStateException(
-                            "non-ListEntry in minimized notif section: " + pipelineEntry.getKey());
+                @Nullable
+                @Override
+                public NodeController getHeaderNodeController() {
+                    return mUseFluentCombinedNotificationList ? null : mSilentNodeController;
                 }
-                final NotificationEntry notifEntry = listEntry.getRepresentativeEntry();
-                if (notifEntry == null) {
-                    continue;
+
+                @Override
+                public void onEntriesUpdated(@NonNull List<PipelineEntry> entries) {
+                    mHasMinimizedEntries = false;
+                    for (int i = 0; i < entries.size(); i++) {
+                        final PipelineEntry pipelineEntry = entries.get(i);
+                        final ListEntry listEntry = pipelineEntry.asListEntry();
+                        if (listEntry == null) {
+                            // Bundles are never minimized
+                            throw new IllegalStateException(
+                                    "non-ListEntry in minimized notif section: "
+                                            + pipelineEntry.getKey());
+                        }
+                        final NotificationEntry notifEntry = listEntry.getRepresentativeEntry();
+                        if (notifEntry == null) {
+                            continue;
+                        }
+                        if (notifEntry.getSbn().isClearable()) {
+                            mHasMinimizedEntries = true;
+                            break;
+                        }
+                    }
+                    mSilentHeaderController.setClearSectionEnabled(
+                            mHasSilentEntries | mHasMinimizedEntries);
                 }
-                if (notifEntry.getSbn().isClearable()) {
-                    mHasMinimizedEntries = true;
-                    break;
-                }
-            }
-            mSilentHeaderController.setClearSectionEnabled(
-                    mHasSilentEntries | mHasMinimizedEntries);
-        }
-    };
+            };
 
     /**
      * Checks whether to filter out the given notification based the notification's Ranking object.

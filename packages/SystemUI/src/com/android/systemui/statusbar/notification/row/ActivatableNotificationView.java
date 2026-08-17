@@ -153,7 +153,14 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
     }
 
     protected void updateColors() {
-        if (notificationRowTransparency()) {
+        if (useFluentNotificationCards()) {
+            mNormalColor =
+                    mContext.getColor(
+                            notificationRowTransparency()
+                                    ? R.color.fluent_notification_card_translucent
+                                    : R.color.fluent_notification_card_opaque);
+            mOpaqueColor = mContext.getColor(R.color.fluent_notification_card_opaque);
+        } else if (notificationRowTransparency()) {
             mNormalColor = SurfaceEffectColors.surfaceEffect1(getContext());
             mOpaqueColor = mContext.getColor(
                     com.android.internal.R.color.materialColorSurfaceContainer);
@@ -216,8 +223,15 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
      * be useful in a configuration change.
      */
     protected void initBackground() {
-        mBackgroundNormal.setCustomBackground(R.drawable.notification_material_bg);
+        mBackgroundNormal.setCustomBackground(
+                useFluentNotificationCards()
+                        ? R.drawable.notification_fluent_bg
+                        : R.drawable.notification_material_bg);
         mBackgroundNormal.setBlurBackgroundEnabled(usesBlurredBackground());
+    }
+
+    private boolean useFluentNotificationCards() {
+        return getResources().getBoolean(R.bool.config_use_fluent_notification_cards);
     }
 
     protected boolean hideBackground() {
@@ -347,7 +361,9 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
     protected void setBackgroundTintColor(int color) {
         if (color != mCurrentBackgroundTint) {
             mCurrentBackgroundTint = color;
-            if (notificationBackgroundTintOptimization() && color == mNormalColor) {
+            if (notificationBackgroundTintOptimization()
+                    && color == mNormalColor
+                    && !useFluentNotificationCards()) {
                 // We don't need to tint a normal notification
                 color = 0;
             }

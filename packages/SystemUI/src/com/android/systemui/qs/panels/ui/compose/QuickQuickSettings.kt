@@ -47,7 +47,7 @@ fun ContentScope.QuickQuickSettings(
 ) {
     val useFluentCompactLayout = booleanResource(R.bool.config_use_fluent_compact_qqs)
     val columns =
-        if (useFluentCompactLayout) QuickQuickSettingsViewModel.FLUENT_COMPACT_TILE_COUNT
+        if (useFluentCompactLayout) QuickQuickSettingsViewModel.FLUENT_COMPACT_COLUMNS
         else viewModel.columns
     val sizedTiles =
         if (useFluentCompactLayout) viewModel.fluentCompactTileViewModels

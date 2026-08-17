@@ -25,6 +25,7 @@ import static android.app.NotificationManager.Policy.SUPPRESSED_EFFECT_NOTIFICAT
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -104,12 +105,14 @@ public class RankingCoordinatorTest extends SysuiTestCase {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        mRankingCoordinator = new RankingCoordinator(
-                mStatusBarStateController,
-                mHighPriorityProvider,
-                mAlertingHeaderController,
-                mSilentHeaderController,
-                mSilentNodeController);
+        mRankingCoordinator =
+                new RankingCoordinator(
+                        mStatusBarStateController,
+                        mHighPriorityProvider,
+                        mContext.getResources(),
+                        mAlertingHeaderController,
+                        mSilentHeaderController,
+                        mSilentNodeController);
         mEntry = spy(new NotificationEntryBuilder().build());
         mEntry.setRanking(getRankingForUnfilteredNotif().build());
 
@@ -135,6 +138,12 @@ public class RankingCoordinatorTest extends SysuiTestCase {
         mSilentSectioner = mRankingCoordinator.getSilentSectioner();
         mMinimizedSectioner = mRankingCoordinator.getMinimizedSectioner();
         mSections.addAll(Arrays.asList(mAlertingSectioner, mSilentSectioner, mMinimizedSectioner));
+    }
+
+    @Test
+    public void combinedList_removesSilentAndMinimizedHeaders() {
+        assertNull(mSilentSectioner.getHeaderNodeController());
+        assertNull(mMinimizedSectioner.getHeaderNodeController());
     }
 
     @Test

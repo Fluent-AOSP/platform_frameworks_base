@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2026 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+    <!--
+      WinUI semantic roles from microsoft-ui-xaml commit
+      6112d936461edb6d81ce7db983c74cc60ea2bc28. The translucent role is the
+      source-over composition of CardBackgroundFillColorDefault on
+      ControlOnImageFillColorDefault because Android rows sit directly over wallpaper blur.
+    -->
+    <color name="fluent_notification_card_translucent_light">@color/fluent_shell_card_fill_translucent_light</color>
+    <color name="fluent_notification_card_opaque_light">@color/fluent_shell_card_fill_opaque_light</color>
+    <color name="fluent_notification_card_stroke_light">@color/fluent_shell_card_stroke_light</color>
+    <color name="fluent_notification_card_hover_light">#09000000</color>
+    <color name="fluent_notification_card_pressed_light">#06000000</color>
+    <color name="fluent_notification_card_translucent_dark">@color/fluent_shell_card_fill_translucent_dark</color>
+    <color name="fluent_notification_card_opaque_dark">@color/fluent_shell_card_fill_opaque_dark</color>
+    <color name="fluent_notification_card_stroke_dark">@color/fluent_shell_card_stroke_dark</color>
+    <color name="fluent_notification_card_hover_dark">#0FFFFFFF</color>
+    <color name="fluent_notification_card_pressed_dark">#0AFFFFFF</color>
+
+    <color name="fluent_notification_card_translucent">@color/fluent_notification_card_translucent_light</color>
+    <color name="fluent_notification_card_opaque">@color/fluent_notification_card_opaque_light</color>
+    <color name="fluent_notification_card_stroke">@color/fluent_notification_card_stroke_light</color>
+    <color name="fluent_notification_card_hover">@color/fluent_notification_card_hover_light</color>
+    <color name="fluent_notification_card_pressed">@color/fluent_notification_card_pressed_light</color>
+</resources>

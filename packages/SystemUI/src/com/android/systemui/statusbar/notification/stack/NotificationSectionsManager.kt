@@ -17,12 +17,14 @@ package com.android.systemui.statusbar.notification.stack
 
 import android.annotation.ColorInt
 import android.annotation.MainThread
+import android.content.res.Resources
 import android.util.Log
 import android.view.View
 import com.android.internal.annotations.VisibleForTesting
 import com.android.systemui.dagger.SysUISingleton
 import com.android.systemui.media.controls.ui.controller.KeyguardMediaController
 import com.android.systemui.notifications.intelligence.rules.shared.NmContextualDisplayLaunch
+import com.android.systemui.res.R
 import com.android.systemui.scene.shared.flag.SceneContainerFlag
 import com.android.systemui.shade.ShadeDisplayAware
 import com.android.systemui.statusbar.notification.SourceType
@@ -48,6 +50,7 @@ import javax.inject.Inject
 class NotificationSectionsManager
 @Inject
 internal constructor(
+    @ShadeDisplayAware resources: Resources,
     @ShadeDisplayAware private val configurationController: ConfigurationController,
     private val keyguardMediaController: KeyguardMediaController,
     private val mediaContainerController: MediaContainerController,
@@ -58,6 +61,8 @@ internal constructor(
     @SilentHeader private val silentHeaderController: SectionHeaderController,
     @HighlightsHeader private val highlightsHeaderController: SectionHeaderController,
 ) : SectionProvider {
+    private val useFluentCombinedNotificationList =
+        resources.getBoolean(R.bool.config_use_fluent_combined_notification_list)
 
     private val groupingDisabledBuckets =
         buildSet<Int> {
@@ -143,7 +148,7 @@ internal constructor(
             view === alertingHeaderView ||
             view === incomingHeaderView ||
             (NmContextualDisplayLaunch.isEnabled && view === highlightsHeaderView) ||
-            getBucket(view) != getBucket(previous)) &&
+            !isSameVisualSection(getBucket(view), getBucket(previous))) &&
             // don't consider the first notification after onboarding to be a new section, so that
             // the onboarding affordance remains close to the notification
             previous !is OnboardingAffordanceView
@@ -159,6 +164,12 @@ internal constructor(
             view is ExpandableNotificationRow -> view.entryAdapter?.sectionBucket
             else -> null
         }
+
+    private fun isSameVisualSection(first: Int?, second: Int?): Boolean =
+        first == second ||
+            (useFluentCombinedNotificationList &&
+                ((first == BUCKET_ALERTING && second == BUCKET_SILENT) ||
+                    (first == BUCKET_SILENT && second == BUCKET_ALERTING)))
 
     private sealed class SectionBounds {
 
@@ -232,17 +243,17 @@ internal constructor(
         // Update the roundness of Views that weren't already in the first/last position
         newFirstChildren.forEach { firstChild ->
             val wasFirstChild = oldFirstChildren.remove(firstChild)
-            if (!wasFirstChild) {
+            if (!wasFirstChild || useFluentCombinedNotificationList) {
                 val notAnimatedChild = !notificationRoundnessManager.isAnimatedChild(firstChild)
-                val animated = firstChild.isShown && notAnimatedChild
+                val animated = !wasFirstChild && firstChild.isShown && notAnimatedChild
                 firstChild.requestTopRoundness(1f, SECTION, animated)
             }
         }
         newLastChildren.forEach { lastChild ->
             val wasLastChild = oldLastChildren.remove(lastChild)
-            if (!wasLastChild) {
+            if (!wasLastChild || useFluentCombinedNotificationList) {
                 val notAnimatedChild = !notificationRoundnessManager.isAnimatedChild(lastChild)
-                val animated = lastChild.isShown && notAnimatedChild
+                val animated = !wasLastChild && lastChild.isShown && notAnimatedChild
                 lastChild.requestBottomRoundness(1f, SECTION, animated)
             }
         }
@@ -253,6 +264,25 @@ internal constructor(
         }
         oldLastChildren.forEach { noMoreLastChild ->
             noMoreLastChild.requestBottomRoundness(0f, SECTION)
+        }
+
+        if (useFluentCombinedNotificationList) {
+            for (index in 1 until children.size) {
+                val previous = children[index - 1]
+                val current = children[index]
+                if (
+                    previous is ExpandableNotificationRow &&
+                        current is ExpandableNotificationRow &&
+                        isSameVisualSection(
+                            previous.entryAdapter.sectionBucket,
+                            current.entryAdapter.sectionBucket,
+                        ) &&
+                        previous.entryAdapter.sectionBucket != current.entryAdapter.sectionBucket
+                ) {
+                    previous.requestBottomRoundness(0f, SECTION)
+                    current.requestTopRoundness(0f, SECTION)
+                }
+            }
         }
 
         if (android.app.Flags.richOngoingImprovements() || NmContextualDisplay.isEnabled) {
@@ -326,7 +356,10 @@ internal constructor(
         view: ExpandableNotificationRow,
         view2: ExpandableNotificationRow,
     ): Boolean {
-        return view.entryAdapter.sectionBucket == view2.entryAdapter.sectionBucket
+        return isSameVisualSection(
+            view.entryAdapter.sectionBucket,
+            view2.entryAdapter.sectionBucket,
+        )
     }
 
     /**

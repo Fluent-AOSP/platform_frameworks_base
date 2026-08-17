@@ -26,6 +26,9 @@
     <!-- The number of rows in the paginated grid QuickQuickSettings -->
     <integer name="quick_qs_paginated_grid_num_rows">1</integer>
 
+    <!-- Landscape retains the platform adaptive collapsed Quick Settings layout. -->
+    <bool name="config_use_fluent_compact_qqs">false</bool>
+
     <!-- The number of columns in the infinite grid QuickSettings -->
     <integer name="quick_settings_infinite_grid_num_columns">8</integer>
 

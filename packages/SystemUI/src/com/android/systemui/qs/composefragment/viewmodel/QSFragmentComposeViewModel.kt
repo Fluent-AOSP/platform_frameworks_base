@@ -82,6 +82,7 @@ import com.android.systemui.util.println
 import com.android.systemui.utils.coroutines.flow.conflatedCallbackFlow
 import com.android.systemui.volume.panel.component.volume.domain.model.SliderType
 import com.android.systemui.volume.panel.component.volume.slider.ui.viewmodel.AudioStreamSliderViewModel
+import com.android.systemui.window.domain.interactor.WindowRootViewBlurInteractor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -124,10 +125,12 @@ constructor(
     private val mediaCarouselInteractor: MediaCarouselInteractor,
     val mediaViewModelFactory: MediaViewModel.Factory,
     shadeStatusBarComponentsInteractor: ShadeStatusBarComponentsInteractor,
+    windowRootViewBlurInteractor: WindowRootViewBlurInteractor,
 ) : Dumpable, ExclusiveActivatable() {
 
     val containerViewModel = containerViewModelFactory.create(supportsBrightnessMirroring = true)
     val quickQuickSettingsViewModel = quickQuickSettingsViewModelFactory.create()
+    val isBlurSupported = windowRootViewBlurInteractor.isBlurCurrentlySupported
     val volumeSliderViewModel =
         audioStreamSliderViewModelFactory.create(
             AudioStreamSliderViewModel.FactoryAudioStreamWrapper(

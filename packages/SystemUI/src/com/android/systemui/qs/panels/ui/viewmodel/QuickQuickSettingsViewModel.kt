@@ -100,6 +100,7 @@ constructor(
     private fun TileSpec.width(): Int = if (largeTiles.contains(this)) largeTilesSpan else 1
 
     companion object {
+        const val FLUENT_COMPACT_COLUMNS = 2
         const val FLUENT_COMPACT_TILE_COUNT = 4
 
         /** Behavior of the media carousel in quick quick settings */

@@ -104,7 +104,7 @@ class ShadeSceneTest : SysuiTestCase() {
                     }
 
                 usingMediaInComposeFragment = true
-                val specs = (1..5).map { TileSpec.create("compact_$it") }
+                val specs = (1..9).map { TileSpec.create("compact_$it") }
                 qsPreferencesInteractor.setLargeTilesSpecs(setOf(specs[1], specs[3]))
                 currentTilesInteractor.setTiles(specs)
 
@@ -154,14 +154,19 @@ class ShadeSceneTest : SysuiTestCase() {
                 compactLabels.forEach { it.assertExists() }
                 val surfaceBounds = compactSurfaces.map { it.getBoundsInRoot() }
                 val labelBounds = compactLabels.map { it.getBoundsInRoot() }
-                assertThat(surfaceBounds.map { it.top }.distinct()).hasSize(1)
-                assertThat(surfaceBounds.map { it.left }).isInOrder()
+                assertThat(surfaceBounds.map { it.top }.distinct()).hasSize(2)
+                surfaceBounds.chunked(2).forEach { row ->
+                    assertThat(row.map { it.top }.distinct()).hasSize(1)
+                    assertThat(row.map { it.left }).isInOrder()
+                }
                 surfaceBounds.zip(labelBounds).forEach { (surface, label) ->
                     assertThat(label.top).isAtLeast(surface.bottom)
                 }
-                composeTestRule
-                    .onNodeWithTag(resIdToTestTag(TileTestTags.fluentCompactSurface(specs.last())))
-                    .assertDoesNotExist()
+                specs.drop(4).forEach { spec ->
+                    composeTestRule
+                        .onNodeWithTag(resIdToTestTag(TileTestTags.fluentCompactSurface(spec)))
+                        .assertDoesNotExist()
+                }
 
                 coroutineContext.cancelChildren()
             }

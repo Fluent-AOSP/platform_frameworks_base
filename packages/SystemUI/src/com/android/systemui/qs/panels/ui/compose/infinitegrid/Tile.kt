@@ -111,6 +111,7 @@ import com.android.systemui.qs.panels.ui.viewmodel.toIconProvider
 import com.android.systemui.qs.panels.ui.viewmodel.toUiState
 import com.android.systemui.qs.pipeline.shared.TileSpec
 import com.android.systemui.qs.tileimpl.QSTileImpl
+import com.android.systemui.qs.ui.composable.LocalFluentQuickSettingsSurfaceColors
 import com.android.systemui.qs.ui.composable.QuickSettingsShade
 import com.android.systemui.qs.ui.compose.borderOnFocus
 import com.android.systemui.res.R
@@ -132,6 +133,9 @@ object TileTestTags {
     fun fluentCompactInteraction(spec: TileSpec) = "qs_fluent_compact_interaction:$spec"
 
     fun fluentCompactLabel(spec: TileSpec) = "qs_fluent_compact_label:$spec"
+
+    const val fluentSplitSeparator = "qs_fluent_split_separator"
+    const val fluentChevron = "qs_fluent_chevron"
 }
 
 /**
@@ -714,15 +718,18 @@ private object TileDefaults {
 
     @Composable
     @ReadOnlyComposable
-    fun inactiveTileColors(): TileColors =
-        TileColors(
-            background = MaterialTheme.colorScheme.surfaceContainer,
+    fun inactiveTileColors(): TileColors {
+        val fluentSurfaceColors = LocalFluentQuickSettingsSurfaceColors.current
+        return TileColors(
+            background =
+                fluentSurfaceColors?.restingFill ?: MaterialTheme.colorScheme.surfaceContainer,
             iconBackground = Color.Transparent,
             label = MaterialTheme.colorScheme.onSurface,
             secondaryLabel = MaterialTheme.colorScheme.onSurface,
             icon = MaterialTheme.colorScheme.onSurface,
-            border = MaterialTheme.colorScheme.outlineVariant,
+            border = fluentSurfaceColors?.restingStroke ?: MaterialTheme.colorScheme.outlineVariant,
         )
+    }
 
     @Composable
     @ReadOnlyComposable

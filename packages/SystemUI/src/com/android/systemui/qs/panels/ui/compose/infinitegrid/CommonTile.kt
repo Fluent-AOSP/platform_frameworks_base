@@ -201,9 +201,10 @@ fun LargeTileContent(
         if (showChevron && isDualTarget) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    Modifier.width(1.dp).height(32.dp).drawBehind {
-                        drawRect(colors.icon.copy(alpha = 0.18f))
-                    }
+                    Modifier.width(1.dp)
+                        .height(32.dp)
+                        .sysuiResTag(TileTestTags.fluentSplitSeparator)
+                        .drawBehind { drawRect(colors.icon.copy(alpha = 0.18f)) }
                 )
                 Box(
                     modifier =
@@ -229,7 +230,9 @@ fun LargeTileContent(
                     Icon(
                         icon = Icon.Resource(R.drawable.ic_fluent_chevron_right_24_regular, null),
                         tint = colors.icon,
-                        modifier = Modifier.size(CommonTileDefaults.ChevronSize),
+                        modifier =
+                            Modifier.size(CommonTileDefaults.ChevronSize)
+                                .sysuiResTag(TileTestTags.fluentChevron),
                     )
                 }
             }

@@ -35,6 +35,12 @@
     -->
     <bool name="notification_scrim_transparent">true</bool>
 
+    <!-- Use individual Fluent notification surfaces over the unlocked Acrylic shade. -->
+    <bool name="config_use_fluent_notification_cards">true</bool>
+
+    <!-- Present alerting and silent cards as one Fluent visual list without reclassifying them. -->
+    <bool name="config_use_fluent_combined_notification_list">true</bool>
+
     <!-- Control whether to force apps to give up control over the display of system bars at all
      times regardless of System Ui Flags.
      In the Automotive case, this is helpful if there's a requirement for an UI element to be on

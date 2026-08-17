@@ -487,6 +487,15 @@ class TileTest : SysuiTestCase() {
             .onNodeWithTag(resIdToTestTag("qs_tile_toggle_target"), useUnmergedTree = true)
             .assertHeightIsEqualTo(48.dp)
             .performClick()
+        composeRule
+            .onNodeWithTag(
+                resIdToTestTag(TileTestTags.fluentSplitSeparator),
+                useUnmergedTree = true,
+            )
+            .assertExists()
+        composeRule
+            .onNodeWithTag(resIdToTestTag(TileTestTags.fluentChevron), useUnmergedTree = true)
+            .assertExists()
 
         assertThat(tile.interactions)
             .containsExactly(

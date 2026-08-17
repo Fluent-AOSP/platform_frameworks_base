@@ -17,10 +17,14 @@ package com.android.systemui.statusbar.notification.row
 
 import android.annotation.ColorInt
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.Path
 import android.graphics.RectF
+import android.graphics.drawable.GradientDrawable
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import android.testing.TestableLooper.RunWithLooper
@@ -90,11 +94,20 @@ class ActivatableNotificationViewTest : SysuiTestCase() {
                 as T?
 
         fun hasBlur(): Boolean = mBackgroundNormal.isBlurEnabled()
+
+        fun backgroundBaseLayer() = mBackgroundNormal.baseBackgroundLayer
+
+        fun backgroundStatefulColors(): ColorStateList =
+            checkNotNull((mBackgroundNormal.statefulBackgroundLayer as GradientDrawable).color)
     }
 
     @Before
     fun setUp() {
         allowTestableLooperAsMainThread()
+        mContext.orCreateTestableResources.addOverride(
+            R.bool.config_use_fluent_notification_cards,
+            false,
+        )
 
         mView = TestActivatableNotificationView(mContext)
 
@@ -107,7 +120,7 @@ class ActivatableNotificationViewTest : SysuiTestCase() {
     @Test
     @DisableFlags(
         Flags.FLAG_NOTIFICATION_ROW_TRANSPARENCY,
-        Flags.FLAG_LOCKSCREEN_BLUR_FOR_NOTIFICATIONS
+        Flags.FLAG_LOCKSCREEN_BLUR_FOR_NOTIFICATIONS,
     )
     fun testBackgroundBehaviors() {
         mView = TestActivatableNotificationView(mContext, useRealNotificationBackgroundView = true)
@@ -133,6 +146,25 @@ class ActivatableNotificationViewTest : SysuiTestCase() {
         mView.setIsBlurSupported(true)
         mView.setOnKeyguard(true)
         assertThat(mView.hasBlur()).isFalse()
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_NOTIFICATION_ROW_TRANSPARENCY)
+    fun fluentNotificationCards_noTransparencyRendersOpaqueBase() {
+        mContext.orCreateTestableResources.addOverride(
+            R.bool.config_use_fluent_notification_cards,
+            true,
+        )
+        mView = TestActivatableNotificationView(mContext, useRealNotificationBackgroundView = true)
+        mView.updateBackgroundColors()
+
+        val bitmap = Bitmap.createBitmap(4, 4, Bitmap.Config.ARGB_8888)
+        mView.backgroundBaseLayer().run {
+            bounds = android.graphics.Rect(0, 0, bitmap.width, bitmap.height)
+            draw(Canvas(bitmap))
+        }
+
+        assertThat(Color.alpha(bitmap.getPixel(2, 2))).isEqualTo(255)
     }
 
     @Test
@@ -169,10 +201,46 @@ class ActivatableNotificationViewTest : SysuiTestCase() {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_NOTIFICATION_ROW_TRANSPARENCY)
+    @DisableFlags(Flags.FLAG_LOCKSCREEN_BLUR_FOR_NOTIFICATIONS)
+    fun fluentNotificationCards_useTranslucentColorOnlyWhenBlurIsSupported() {
+        mContext.orCreateTestableResources.addOverride(
+            R.bool.config_use_fluent_notification_cards,
+            true,
+        )
+        mView = TestActivatableNotificationView(mContext, useRealNotificationBackgroundView = true)
+        mView.setOnKeyguard(false)
+        mView.updateBackgroundColors()
+
+        assertThat(mView.currentBackgroundTint)
+            .isEqualTo(mContext.getColor(R.color.fluent_notification_card_opaque))
+        assertFluentCardStateColors()
+
+        mView.setIsBlurSupported(true)
+        mView.updateBackgroundColors()
+
+        assertThat(mView.currentBackgroundTint)
+            .isEqualTo(mContext.getColor(R.color.fluent_notification_card_translucent))
+        assertFluentCardStateColors()
+    }
+
+    private fun assertFluentCardStateColors() {
+        val colors = mView.backgroundStatefulColors()
+        assertThat(
+                colors.getColorForState(intArrayOf(android.R.attr.state_hovered), Color.TRANSPARENT)
+            )
+            .isEqualTo(mContext.getColor(R.color.fluent_notification_card_hover))
+        assertThat(
+                colors.getColorForState(intArrayOf(android.R.attr.state_pressed), Color.TRANSPARENT)
+            )
+            .isEqualTo(mContext.getColor(R.color.fluent_notification_card_pressed))
+    }
+
+    @Test
     @Ignore("TODO(b/469142819) - Determine how to get robolectric looper work with this")
     @EnableFlags(
         Flags.FLAG_NOTIFICATION_ROW_TRANSPARENCY,
-        Flags.FLAG_LOCKSCREEN_BLUR_FOR_NOTIFICATIONS
+        Flags.FLAG_LOCKSCREEN_BLUR_FOR_NOTIFICATIONS,
     )
     fun testBackgroundBehaviorsWithBlur() {
         mView = TestActivatableNotificationView(context, useRealNotificationBackgroundView = true)

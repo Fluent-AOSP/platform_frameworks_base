@@ -23,10 +23,7 @@
     <!-- Source vectors use this name; Compose applies semantic tile tint at render time. -->
     <color name="fluent_default_icon_tint">#FF000000</color>
 
-    <!--
-      WinUI control resources, preserved in #AARRGGBB form. These match
-      ControlFillColorDefault/Secondary/Disabled and ControlStrokeColorDefault.
-    -->
+    <!-- General control roles for toolbar, footer, edit, slider, and unavailable surfaces. -->
     <color name="fluent_qs_control_fill_light">#B3FFFFFF</color>
     <color name="fluent_qs_control_fill_secondary_light">#80F9F9F9</color>
     <color name="fluent_qs_control_fill_disabled_light">#4DF9F9F9</color>
@@ -36,6 +33,14 @@
     <color name="fluent_qs_control_fill_disabled_dark">#0BFFFFFF</color>
     <color name="fluent_qs_control_stroke_dark">#12FFFFFF</color>
 
+    <!-- Inactive tile surfaces alone share the shell-card layer with notifications. -->
+    <color name="fluent_qs_tile_fill_light">@color/fluent_shell_card_fill_translucent_light</color>
+    <color name="fluent_qs_tile_fill_dark">@color/fluent_shell_card_fill_translucent_dark</color>
+    <color name="fluent_qs_tile_fill_opaque_light">@color/fluent_shell_card_fill_opaque_light</color>
+    <color name="fluent_qs_tile_fill_opaque_dark">@color/fluent_shell_card_fill_opaque_dark</color>
+    <color name="fluent_qs_tile_stroke_light">@color/fluent_shell_card_stroke_light</color>
+    <color name="fluent_qs_tile_stroke_dark">@color/fluent_shell_card_stroke_dark</color>
+
     <!--
       Android's compositor owns the blur. This translucent tint approximates WinUI's dark
       transient Acrylic #2C2C2C recipe without turning the shade into an opaque Mica layer.
@@ -44,7 +49,7 @@
     <color name="fluent_qs_acrylic_tint_dark">#992C2C2C</color>
 
     <!-- Solid controls are used when the shade blur feature is unavailable. -->
-    <color name="fluent_qs_control_fill_opaque_light">#FFFFFFFF</color>
+    <color name="fluent_qs_control_fill_opaque_light">#FFF9F9F9</color>
     <color name="fluent_qs_control_fill_secondary_opaque_light">#FFF9F9F9</color>
     <color name="fluent_qs_control_fill_disabled_opaque_light">#FFEDEDED</color>
     <color name="fluent_qs_control_fill_opaque_dark">#FF2D2D2D</color>

@@ -20,7 +20,10 @@ import android.view.ContextThemeWrapper
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -30,6 +33,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import com.android.systemui.Flags.notificationShadeBlur
 import com.android.systemui.res.R
+
+@Immutable
+data class FluentQuickSettingsSurfaceColors(val restingFill: Color, val restingStroke: Color)
+
+val LocalFluentQuickSettingsSurfaceColors =
+    staticCompositionLocalOf<FluentQuickSettingsSurfaceColors?> { null }
 
 @Composable
 fun QuickSettingsTheme(
@@ -92,6 +101,15 @@ fun QuickSettingsTheme(
                 else -> R.color.fluent_qs_control_fill_opaque_light
             }
         )
+    val restingTileFill =
+        colorResource(
+            when {
+                useDarkPalette && useTranslucentControls -> R.color.fluent_qs_tile_fill_dark
+                useDarkPalette -> R.color.fluent_qs_tile_fill_opaque_dark
+                useTranslucentControls -> R.color.fluent_qs_tile_fill_light
+                else -> R.color.fluent_qs_tile_fill_opaque_light
+            }
+        )
     val secondaryControlFill =
         colorResource(
             when {
@@ -116,6 +134,11 @@ fun QuickSettingsTheme(
         colorResource(
             if (useDarkPalette) R.color.fluent_qs_control_stroke_dark
             else R.color.fluent_qs_control_stroke_light
+        )
+    val restingTileStroke =
+        colorResource(
+            if (useDarkPalette) R.color.fluent_qs_tile_stroke_dark
+            else R.color.fluent_qs_tile_stroke_light
         )
     val panelTint =
         if (useTranslucentControls) {
@@ -156,12 +179,21 @@ fun QuickSettingsTheme(
             surfaceContainerLowest = disabledControlFill,
             outlineVariant = controlStroke,
         )
+    val fluentSurfaceColors =
+        remember(restingTileFill, restingTileStroke) {
+            FluentQuickSettingsSurfaceColors(restingTileFill, restingTileStroke)
+        }
 
     MaterialTheme(
         colorScheme = fluentColorScheme,
         typography = fluentTypography,
         shapes = MaterialTheme.shapes,
     ) {
-        CompositionLocalProvider(LocalContext provides themedContext) { content() }
+        CompositionLocalProvider(
+            LocalContext provides themedContext,
+            LocalFluentQuickSettingsSurfaceColors provides fluentSurfaceColors,
+        ) {
+            content()
+        }
     }
 }

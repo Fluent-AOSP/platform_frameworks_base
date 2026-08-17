@@ -172,7 +172,7 @@ constructor(
 
         LaunchedEffectWithLifecycle(key1 = Unit) { viewModel.detectShadeModeChanges() }
 
-        QuickSettingsTheme {
+        QuickSettingsTheme(useTranslucentControls = viewModel.isTransparencyEnabled) {
             QuickSettingsScene(
                 notificationStackScrollView = notificationStackScrollView.get(),
                 viewModel = viewModel,
